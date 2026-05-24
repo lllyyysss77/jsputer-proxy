@@ -356,3 +356,9 @@ curl -X POST http://localhost:3333/qwen/chat \
 **Next: [PROVIDERS.md](PROVIDERS.md) — Detailed provider tutorials**
 
 </div>
+
+---
+
+> **Contact:** Mulky Malikul Dhaher — [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
+>
+> **Disclaimer:** This project is for Education Purpose only. Risiko apapun tidak kita tanggung. (We are not responsible for any risks or damages.)

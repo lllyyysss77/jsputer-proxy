@@ -651,3 +651,9 @@ curl -X POST http://localhost:3333/v1/chat/completions \
 **📚 For more details, see [API.md](API.md) and [TUTORIAL.md](TUTORIAL.md)**
 
 </div>
+
+---
+
+> **Contact:** Mulky Malikul Dhaher — [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
+>
+> **Disclaimer:** This project is for Education Purpose only. Risiko apapun tidak kita tanggung. (We are not responsible for any risks or damages.)

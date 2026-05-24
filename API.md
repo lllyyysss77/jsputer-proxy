@@ -461,3 +461,9 @@ When rate limited, the response is:
 **Back to: [PROVIDERS.md](PROVIDERS.md) | [TUTORIAL.md](TUTORIAL.md) | [README.md](README.md)**
 
 </div>
+
+---
+
+> **Contact:** Mulky Malikul Dhaher — [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
+>
+> **Disclaimer:** This project is for Education Purpose only. Risiko apapun tidak kita tanggung. (We are not responsible for any risks or damages.)

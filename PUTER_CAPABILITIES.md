@@ -208,3 +208,9 @@ const response = await puter.ai.chat(
 - Docs: https://docs.puter.com/
 - API Reference: https://docs.puter.com/llms.txt
 - Models: https://developer.puter.com/ai/models/
+
+---
+
+> **Contact:** Mulky Malikul Dhaher — [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
+>
+> **Disclaimer:** This project is for Education Purpose only. Risiko apapun tidak kita tanggung. (We are not responsible for any risks or damages.)

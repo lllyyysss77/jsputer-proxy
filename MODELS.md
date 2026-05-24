@@ -158,3 +158,9 @@ sudo journalctl -u puter-proxy -f
 - 401: Missing auth token (check PUTER_AUTH_TOKEN)
 - 404: Wrong endpoint (use /v1/chat/completions or /v1/messages)
 - 500: Server error (check logs with journalctl)
+
+---
+
+> **Contact:** Mulky Malikul Dhaher — [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
+>
+> **Disclaimer:** This project is for Education Purpose only. Risiko apapun tidak kita tanggung. (We are not responsible for any risks or damages.)
