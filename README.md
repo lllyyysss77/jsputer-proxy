@@ -10,7 +10,7 @@
 
 <br/>
 
-[![Version](https://img.shields.io/badge/Version-2.0.0-2E9EF7?style=for-the-badge&logo=semver)](https://github.com/mulkymalikuldhrs/jsputer-proxy/releases)
+[![Version](https://img.shields.io/badge/Version-2.2.0-2E9EF7?style=for-the-badge&logo=semver)](https://github.com/mulkymalikuldhrs/jsputer-proxy/releases)
 [![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express)](https://expressjs.com/)
 [![Z.ai](https://img.shields.io/badge/Z.ai-SDK-FF6B35?style=for-the-badge)](https://www.npmjs.com/package/z-ai-web-dev-sdk)
@@ -44,7 +44,9 @@
 - [API Endpoints](#api-endpoints)
 - [Available Models](#available-models)
 - [Configuration](#configuration)
+- [Provider Tutorials](#provider-tutorials)
 - [Contributing](#contributing)
+- [Disclaimer](#disclaimer)
 - [License](#license)
 
 ---
@@ -110,7 +112,13 @@ curl -X POST http://localhost:3333/v1/chat/completions \
 |----------|----------|-------------|
 | `POST /v1/chat/completions` | OpenAI | OpenAI-compatible chat completions |
 | `POST /v1/messages` | Anthropic | Anthropic-compatible messages |
-| `POST /chat` | Native | Puter native API with auto-routing |
+| `POST /chat` | Native | Unified auto-routed chat |
+| `POST /zai/chat` | Direct | Direct Z.ai provider |
+| `POST /qwen/chat` | Direct | Direct Qwen provider |
+| `POST /route` | Debug | Routing decision (no execution) |
+| `GET /health` | Status | Health check |
+| `GET /models` | Status | List available models |
+| `GET /status` | Status | Provider status |
 
 <details>
 <summary>📖 Example Requests</summary>
@@ -188,9 +196,27 @@ FAST      (simple question, <100 chars)               →  gpt-5-nano
 DEFAULT                                               →  gpt-5-nano
 ```
 
+### Provider Tutorials
+
+| Provider | Documentation | Specialization |
+|----------|---------------|----------------|
+| 🧠 **Z.ai** | [Z.ai Tutorial](PROVIDERS.md#zai-provider) | Reasoning, analysis, creative |
+| 💻 **Qwen** | [Qwen Tutorial](PROVIDERS.md#qwen-provider) | Code generation, structured output |
+| 🌐 **Puter.js** | [Puter.js Tutorial](PROVIDERS.md#puterjs-provider) | 18+ models (GPT-4o, Claude, etc.) |
+
+📖 **Full Guides:** [PROVIDERS.md](PROVIDERS.md) | [TUTORIAL.md](TUTORIAL.md) | [API.md](API.md)
+
 ### Contributing
 
 We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+### Disclaimer
+
+> **⚠️ For Education Purpose Only**
+>
+> This project is provided strictly for educational and research purposes. The authors and contributors assume **no responsibility or liability** for any damages, losses, or risks arising from the use of this software. **We do not bear any responsibility or risk** for how this software is used. Any use for commercial, illegal, or unethical purposes is strictly prohibited.
+
+**Contact:** Mulky Malikul Dhaher | [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
 
 ### License
 
@@ -300,9 +326,27 @@ NODE_ENV=development
 LOG_LEVEL=info
 ```
 
+### Tutorial Provider
+
+| Provider | Dokumentasi | Spesialisasi |
+|----------|-------------|-------------|
+| 🧠 **Z.ai** | [Tutorial Z.ai](PROVIDERS.md#provider-zai) | Penalaran, analisis, kreatif |
+| 💻 **Qwen** | [Tutorial Qwen](PROVIDERS.md#provider-qwen-id) | Generasi kode, output terstruktur |
+| 🌐 **Puter.js** | [Tutorial Puter.js](PROVIDERS.md#provider-puterjs-id) | 18+ model (GPT-4o, Claude, dll.) |
+
+📖 **Panduan Lengkap:** [PROVIDERS.md](PROVIDERS.md) | [TUTORIAL.md](TUTORIAL.md) | [API.md](API.md)
+
 ### Kontribusi {#kontribusi-id}
 
 Kami menyambut kontribusi! Silakan lihat [CONTRIBUTING.md](CONTRIBUTING.md) untuk detailnya.
+
+### Penyangkalan
+
+> **⚠️ Hanya untuk Tujuan Pendidikan**
+>
+> Proyek ini disediakan secara ketat untuk tujuan pendidikan dan penelitian. Penulis dan kontributor **tidak bertanggung jawab** atas kerusakan, kerugian, atau risiko yang timbul dari penggunaan perangkat lunak ini. **Kami tidak menanggung tanggung jawab atau risiko** apapun atas penggunaan perangkat lunak ini. Penggunaan untuk tujuan komersial, ilegal, atau tidak etis dilarang keras.
+
+**Kontak:** Mulky Malikul Dhaher | [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
 
 ### Lisensi {#lisensi-id}
 
@@ -412,9 +456,27 @@ NODE_ENV=development
 LOG_LEVEL=info
 ```
 
+### 提供商教程
+
+| 提供商 | 文档 | 专长 |
+|--------|------|------|
+| 🧠 **Z.ai** | [Z.ai 教程](PROVIDERS.md#zai-提供商) | 推理、分析、创意 |
+| 💻 **Qwen** | [Qwen 教程](PROVIDERS.md#qwen-提供商) | 代码生成、结构化输出 |
+| 🌐 **Puter.js** | [Puter.js 教程](PROVIDERS.md#puterjs-提供商) | 18+ 模型（GPT-4o、Claude 等） |
+
+📖 **完整指南：** [PROVIDERS.md](PROVIDERS.md) | [TUTORIAL.md](TUTORIAL.md) | [API.md](API.md)
+
 ### 贡献
 
 欢迎贡献！请参阅 [CONTRIBUTING.md](CONTRIBUTING.md) 了解详情。
+
+### 免责声明
+
+> **⚠️ 仅供教育目的**
+>
+> 本项目严格用于教育和研究目的。作者和贡献者**不承担**因使用本软件而产生的任何损害、损失或风险的责任。**我们不承担任何责任或风险**对于本软件的使用方式。严禁将本软件用于商业、非法或不道德的目的。
+
+**联系方式：** Mulky Malikul Dhaher | [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
 
 ### 许可证
 
@@ -450,5 +512,7 @@ LOG_LEVEL=info
 ### Made with ❤️ by [Mulky Malikul Dhaher](https://github.com/mulkymalikuldhrs)
 
 **JSUPTER AI Gateway** — Free AI Access for Everyone 🚀
+
+**For Education Purpose Only — No Responsibility or Liability Assumed**
 
 </div>

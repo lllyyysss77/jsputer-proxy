@@ -1,12 +1,23 @@
 # Security Policy
 
+> **⚠️ Disclaimer — For Education Purpose Only**
+>
+> This project is provided strictly for educational and research purposes. The authors and contributors assume **no responsibility or liability** for any damages, losses, or risks arising from the use of this software. **We do not bear any responsibility or risk** for how this software is used.
+
+---
+
+**📬 Contact:** Mulky Malikul Dhaher | [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com)
+
+---
+
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 2.0.x   | :white_check_mark: |
-| 1.0.x   | :white_check_mark: |
-| < 1.0   | :x:                |
+| Version | Supported |
+| ------- | --------- |
+| 2.1.x   | ✅ |
+| 2.0.x   | ✅ |
+| 1.0.x   | ✅ |
+| < 1.0   | ❌ |
 
 ## Reporting a Vulnerability
 
@@ -57,6 +68,8 @@ Please include the following information in your report:
 - Information disclosure vulnerabilities
 - Denial of service (DoS) vulnerabilities
 - API key or token exposure in source code
+- Prompt injection vulnerabilities
+- Provider API key leakage
 
 #### Out of Scope
 
@@ -66,8 +79,26 @@ Please include the following information in your report:
 - Vulnerabilities in third-party dependencies (report to the dependency maintainer)
 - Issues already reported
 
+### Security Best Practices for Users
+
+1. **Never expose your Puter token** in client-side code or public repositories
+2. **Use HTTPS** in production deployments
+3. **Enable rate limiting** to prevent abuse
+4. **Monitor access logs** for suspicious activity
+5. **Keep dependencies updated** with `npm audit`
+6. **Use environment variables** for all sensitive configuration
+7. **Restrict network access** to the gateway port (3333) using firewalls
+
 ### Recognition
 
 We appreciate responsible disclosure and will acknowledge contributors who report valid security vulnerabilities in our release notes (unless they prefer to remain anonymous).
 
 Thank you for helping keep JSUPTER AI Gateway and our users safe!
+
+---
+
+<div align="center">
+
+**For Education Purpose Only — No Responsibility or Liability Assumed**
+
+</div>

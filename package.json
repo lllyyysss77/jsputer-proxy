@@ -1,6 +1,6 @@
 {
   "name": "jsputer-ai-gateway",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Multi-LLM Task-Based Gateway System with auto-routing, streaming, and hybrid execution",
   "main": "src/index.js",
   "type": "module",
