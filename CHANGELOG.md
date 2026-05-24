@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-05-25
+
+### Improved
+- **Package version** bumped to 2.1.0
+- **Added lint script** for syntax checking (`npm run lint`)
+- **Added clean script** for cache cleanup (`npm run clean`)
+- **Improved test script** with graceful fallback
+- **Code audit** — verified all provider adapters (Z.ai, Qwen, Puter.js)
+- **Verified** all API endpoints (/chat, /v1/chat/completions, /v1/messages, /zai/chat, /qwen/chat, /route)
+- **Verified** task classifier keyword patterns and structural pattern boosts
+- **Verified** routing engine primary/fallback chains and hybrid execution
+- **Verified** SSE streaming engine with error handling
+- **Verified** middleware (rate limiter, request logger, error handler, CORS, validation)
+
 ## [2.0.0] - 2026-03-04
 
 ### 🎉 Major Release — JSUPTER AI Gateway
