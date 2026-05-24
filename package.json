@@ -1,49 +1,20 @@
 {
-  "name": "jsputer-ai-gateway",
-  "version": "2.1.0",
-  "description": "Multi-LLM Task-Based Gateway System with auto-routing, streaming, and hybrid execution",
-  "main": "src/index.js",
+  "name": "puter-proxy",
+  "version": "1.0.0",
+  "description": "Puter AI proxy with auto-routing",
+  "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
-    "build": "echo 'No build step required — this is a pure Node.js project'",
-    "test": "node --test src/**/*.test.js 2>/dev/null || echo 'No tests found'",
-    "lint": "node --check src/index.js && echo 'Syntax OK'",
-    "clean": "rm -rf node_modules/.cache"
+    "start": "node index.js",
+    "dev": "node --watch index.js"
   },
-  "keywords": [
-    "llm",
-    "gateway",
-    "ai",
-    "proxy",
-    "multi-provider",
-    "puter",
-    "qwen",
-    "zai",
-    "streaming",
-    "auto-routing"
-  ],
-  "author": {
-    "name": "Mulky Malikul Dhaher",
-    "email": "mulkymalikuldhaher@email.com",
-    "url": "https://github.com/mulkymalikuldhrs"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mulkymalikuldhrs/jsputer-proxy.git"
-  },
-  "bugs": {
-    "url": "https://github.com/mulkymalikuldhrs/jsputer-proxy/issues"
-  },
-  "homepage": "https://github.com/mulkymalikuldhrs/jsputer-proxy#readme",
-  "private": false,
-  "license": "MIT",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
     "@heyputer/puter.js": "^2.2.5",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "z-ai-web-dev-sdk": "^0.0.17"
+    "express": "^5.2.1"
   }
 }
