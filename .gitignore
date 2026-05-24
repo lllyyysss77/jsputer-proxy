@@ -51,6 +51,9 @@ temp/
 # TypeScript
 *.tsbuildinfo
 
+# Dependency bloat (jsdom is an internal Puter.js dependency)
+jsdom/
+
 # Misc
 *.egg-info
 .eggs/
