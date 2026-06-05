@@ -1,9 +1,15 @@
+# =============================================================================
+# JSUPTER AI Gateway - Git Ignore
+# =============================================================================
+
 # Dependencies
 node_modules/
 
 # Environment files
 .env
 .env.local
+.env.development
+.env.production
 .env.*.local
 
 # Build outputs
@@ -51,6 +57,9 @@ temp/
 # TypeScript
 *.tsbuildinfo
 
+# Binary objects
+*.so
+
 # Misc
 *.egg-info
 .eggs/
@@ -60,3 +69,4 @@ __pycache__/
 .nox/
 .coverage
 .pytest_cache/
+.replit

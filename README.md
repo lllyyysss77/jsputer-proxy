@@ -10,7 +10,7 @@
 
 <br/>
 
-[![Version](https://img.shields.io/badge/Version-2.2.0-2E9EF7?style=for-the-badge&logo=semver)](https://github.com/mulkymalikuldhrs/jsputer-proxy/releases)
+[![Version](https://img.shields.io/badge/Version-3.0.0-2E9EF7?style=for-the-badge&logo=semver)](https://github.com/mulkymalikuldhrs/jsputer-proxy/releases)
 [![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express)](https://expressjs.com/)
 [![Z.ai](https://img.shields.io/badge/Z.ai-SDK-FF6B35?style=for-the-badge)](https://www.npmjs.com/package/z-ai-web-dev-sdk)
@@ -80,8 +80,11 @@
 | 🔓 **Free Access** | No expensive API keys required via Puter.js | ✅ |
 | ⚡ **Auto-Routing** | Intelligent model selection based on query type | ✅ |
 | 🔒 **Privacy First** | All requests route through your local proxy | ✅ |
+| 🛡️ **Rate Limiting** | Per-IP rate limiting (100 req/min default) | ✅ |
+| 🔑 **API Key Auth** | Optional API key authentication for production | ✅ |
+| ✅ **Input Validation** | Full request validation — roles, lengths, counts | ✅ |
 | 🐳 **Docker Ready** | Easy deployment with containers | ✅ |
-| 📊 **50MB Payloads** | Large context and document support | ✅ |
+| 📊 **10MB Payloads** | Large context and document support | ✅ |
 
 ### Quick Start
 
@@ -117,8 +120,8 @@ curl -X POST http://localhost:3333/v1/chat/completions \
 | `POST /qwen/chat` | Direct | Direct Qwen provider |
 | `POST /route` | Debug | Routing decision (no execution) |
 | `GET /health` | Status | Health check |
-| `GET /models` | Status | List available models |
 | `GET /status` | Status | Provider status |
+| `GET /models` | Status | List available models |
 
 <details>
 <summary>📖 Example Requests</summary>
@@ -184,6 +187,16 @@ NODE_ENV=development
 
 # Logging
 LOG_LEVEL=info
+
+# Rate Limiting
+RATELIMIT_WINDOW_MS=60000
+RATELIMIT_MAX_REQUESTS=100
+
+# CORS (leave empty to disable)
+CORS_ORIGIN=http://localhost:3000
+
+# API Key Auth (leave empty to disable)
+API_KEY=your_secret_key
 ```
 
 ### Auto-Routing Logic

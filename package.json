@@ -1,6 +1,6 @@
 {
   "name": "jsputer-ai-gateway",
-  "version": "2.2.0",
+  "version": "3.0.0",
   "description": "Multi-LLM Task-Based Gateway System with auto-routing, streaming, and hybrid execution",
   "main": "index.js",
   "type": "module",
@@ -8,7 +8,7 @@
     "start": "node index.js",
     "dev": "node --watch index.js",
     "build": "echo 'No build step required — this is a pure Node.js project'",
-    "test": "node --test src/**/*.test.js 2>/dev/null || echo 'No tests found'",
+    "test": "node --test src/**/*.test.js",
     "lint": "node --check index.js && echo 'Syntax OK'",
     "clean": "rm -rf node_modules/.cache"
   },
