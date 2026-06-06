@@ -96,11 +96,11 @@ const ALLOWED_ROLES = new Set(['system', 'user', 'assistant', 'tool']);
  * @param {import('express').NextFunction} next
  */
 export function validateChatRequest(req, res, next) {
-  const { messages, model } = req.body;
-
   if (!req.body || typeof req.body !== 'object') {
     return res.status(400).json({ error: "Request body must be a JSON object", type: "invalid_request" });
   }
+
+  const { messages, model } = req.body;
 
   if (model !== undefined && typeof model !== 'string') {
     return res.status(400).json({ error: "model must be a string", type: "invalid_request" });
@@ -148,11 +148,11 @@ export function validateChatRequest(req, res, next) {
  * @param {import('express').NextFunction} next
  */
 export function validateMessagesRequest(req, res, next) {
-  const { messages, model, system, prompt, max_tokens } = req.body;
-
   if (!req.body || typeof req.body !== 'object') {
     return res.status(400).json({ error: "Request body must be a JSON object", type: "invalid_request" });
   }
+
+  const { messages, model, system, prompt, max_tokens } = req.body;
 
   if (model !== undefined && typeof model !== 'string') {
     return res.status(400).json({ error: "model must be a string", type: "invalid_request" });

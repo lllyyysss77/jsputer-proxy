@@ -205,7 +205,7 @@ app.get("/health", (req, res) => {
     status: "ok",
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    version: process.env.npm_package_version || "3.0.0"
+    version: process.env.npm_package_version || "3.0.1"
   });
 });
 
@@ -219,6 +219,28 @@ app.get("/status", (req, res) => {
     rate_limiting: true,
     cors_enabled: !!CORS_ORIGIN,
     api_key_auth: !!process.env.API_KEY
+  });
+});
+
+app.get("/models", (req, res) => {
+  res.json({
+    object: "list",
+    data: [
+      { id: "deepseek-chat", provider: "puter", type: "reasoning", description: "DeepSeek Chat — general purpose, planning" },
+      { id: "gpt-5-chat", provider: "puter", type: "general", description: "OpenAI GPT-5 Chat — latest OpenAI model" },
+      { id: "gpt-4o", provider: "puter", type: "general", description: "OpenAI GPT-4o — complex reasoning, code" },
+      { id: "gpt-4o-mini", provider: "puter", type: "fast", description: "OpenAI GPT-4o Mini — quick tasks" },
+      { id: "gemini-2.0-flash", provider: "puter", type: "fast", description: "Google Gemini 2.0 Flash — balanced performance" },
+      { id: "claude-opus-4-5-latest", provider: "puter", type: "code/analysis", description: "Anthropic Claude Opus 4.5 — best for code, architecture" },
+      { id: "claude-sonnet-4", provider: "puter", type: "balanced", description: "Anthropic Claude Sonnet 4 — code + analysis" },
+      { id: "claude-haiku-4-5", provider: "puter", type: "fast", description: "Anthropic Claude Haiku 4.5 — quick responses" },
+      { id: "grok-3", provider: "puter", type: "general", description: "xAI Grok 3 — flagship model" },
+      { id: "grok-3-fast", provider: "puter", type: "fast", description: "xAI Grok 3 Fast — quick responses" },
+      { id: "grok-2-vision", provider: "puter", type: "vision", description: "xAI Grok 2 Vision — image understanding" },
+      { id: "mistral-large-2512", provider: "puter", type: "general", description: "Mistral Large — best Mistral model" },
+      { id: "codestral-2508", provider: "puter", type: "code", description: "Codestral — code generation" },
+      { id: "qwen-2.5-coder-32b-instruct", provider: "puter", type: "code", description: "Qwen 2.5 Coder 32B — dedicated coding" }
+    ]
   });
 });
 
@@ -239,13 +261,14 @@ app.use((err, req, res, _next) => {
 // ── Start Server ──────────────────────────────────────────────────────
 
 app.listen(PORT, () => {
-  console.log(`JSUPTER AI Gateway v3.0.0 running on http://localhost:${PORT}`);
+  console.log(`JSUPTER AI Gateway v3.0.1 running on http://localhost:${PORT}`);
   console.log("Available routes:");
   console.log("  POST /chat               - Chat with AI (auto-routing)");
   console.log("  POST /v1/chat/completions - OpenAI-compatible API");
   console.log("  POST /v1/messages         - Anthropic-compatible API");
   console.log("  GET  /health              - Health check");
   console.log("  GET  /status              - Server status");
+  console.log("  GET  /models              - List available models");
   if (CORS_ORIGIN) console.log(`  CORS origin: ${CORS_ORIGIN}`);
   if (process.env.API_KEY) console.log("  API key authentication: enabled");
 });

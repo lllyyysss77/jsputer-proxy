@@ -128,17 +128,16 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-// Generate self-signed cert
+// Generate self-signed cert if not exist
+if (!fs.existsSync('/tmp/key.pem') || !fs.existsSync('/tmp/cert.pem')) {
+  const { execSync } = require('child_process');
+  execSync('openssl req -x509 -newkey rsa:2048 -keyout /tmp/key.pem -out /tmp/cert.pem -days 365 -nodes -subj "/CN=localhost"', { stdio: 'inherit' });
+}
+
 const certs = {
   key: fs.readFileSync('/tmp/key.pem'),
   cert: fs.readFileSync('/tmp/cert.pem')
 };
-
-// Generate certs if not exist
-if (!fs.existsSync('/tmp/key.pem')) {
-  const { execSync } = require('child_process');
-  execSync('openssl req -x509 -newkey rsa:2048 -keyout /tmp/key.pem -out /tmp/cert.pem -days 365 -nodes -subj "/CN=localhost"', { stdio: 'inherit' });
-}
 
 const httpServer = http.createServer(app);
 const httpsServer = https.createServer(certs, app);

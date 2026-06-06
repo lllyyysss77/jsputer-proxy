@@ -3,7 +3,7 @@ export function pickModel(messages) {
   
   // If "auto" or empty, use intelligent default
   if (!text || text.trim() === "") {
-    return "gpt-5-nano";
+    return "deepseek-chat";
   }
   
   // BUILDING (Code, Architecture, Implementation)
@@ -31,7 +31,7 @@ export function pickModel(messages) {
     text.includes("build") ||
     text.includes("develop")
   ) {
-    return "gpt-5-nano";  // Use DeepSeek for code (faster, cheaper)
+    return "claude-opus-4-5-latest";  // Best for code, architecture, implementation
   }
   
   // PLANNING (Architecture, Design, Analysis)
@@ -55,7 +55,7 @@ export function pickModel(messages) {
     text.includes("system design") ||
     text.includes("high level")
   ) {
-    return "deepseek-reasoner";  // DeepSeek for planning too
+    return "deepseek-chat";  // DeepSeek for planning and general tasks
   }
   
   // REASONING (Complex problem solving, math, logic)
@@ -72,7 +72,7 @@ export function pickModel(messages) {
     text.includes("derive") ||
     text.includes("think about")
   ) {
-    return "deepseek-reasoner";  // DeepSeek for reasoning (has reasoning model built-in)
+    return "gpt-4o";  // GPT-4o for complex reasoning
   }
   
   // FAST/GENERAL (Quick tasks, simple questions)
@@ -80,9 +80,9 @@ export function pickModel(messages) {
     text.includes("?") ||
     text.length < 100
   ) {
-    return "gpt-5-nano";  // Use fast model for simple queries
+    return "gpt-4o-mini";  // Fast model for simple queries
   }
   
   // Default - balanced for most tasks
-  return "gpt-5-nano";
+  return "deepseek-chat";
 }

@@ -434,11 +434,11 @@ All errors follow a consistent format:
 
 ## Rate Limiting
 
-By default, the gateway allows **120 requests per minute** per IP address. Rate limit headers are included in every response:
+By default, the gateway allows **100 requests per minute** per IP address. Rate limit headers are included in every response:
 
 ```
-X-RateLimit-Limit: 120
-X-RateLimit-Remaining: 115
+X-RateLimit-Limit: 100
+X-RateLimit-Remaining: 95
 X-RateLimit-Reset: 2026-05-25T12:01:00.000Z
 ```
 
@@ -449,7 +449,7 @@ When rate limited, the response is:
   "error": "Rate limit exceeded",
   "type": "rate_limit_error",
   "retry_after_seconds": 30,
-  "limit": 120,
+  "limit": 100,
   "window_ms": 60000
 }
 ```

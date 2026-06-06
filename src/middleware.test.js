@@ -11,39 +11,39 @@ import assert from 'node:assert/strict';
 import { pickModel } from '../router.js';
 
 describe('Router — pickModel()', () => {
-  it('should return gpt-5-nano for empty messages', () => {
+  it('should return deepseek-chat for empty messages', () => {
     const result = pickModel([{ role: 'user', content: '' }]);
-    assert.equal(result, 'gpt-5-nano');
+    assert.equal(result, 'deepseek-chat');
   });
 
-  it('should route code-related queries to gpt-5-nano', () => {
+  it('should route code-related queries to claude-opus-4-5-latest', () => {
     const result = pickModel([{ role: 'user', content: 'Write a function to sort an array' }]);
-    assert.equal(result, 'gpt-5-nano');
+    assert.equal(result, 'claude-opus-4-5-latest');
   });
 
-  it('should route planning queries to deepseek-reasoner', () => {
+  it('should route planning queries to deepseek-chat', () => {
     const result = pickModel([{ role: 'user', content: 'Plan the architecture for a microservices system' }]);
-    assert.equal(result, 'deepseek-reasoner');
+    assert.equal(result, 'deepseek-chat');
   });
 
-  it('should route reasoning queries to deepseek-reasoner', () => {
+  it('should route reasoning queries to gpt-4o', () => {
     const result = pickModel([{ role: 'user', content: 'Explain how neural networks work step by step' }]);
-    assert.equal(result, 'deepseek-reasoner');
+    assert.equal(result, 'gpt-4o');
   });
 
-  it('should route short queries to gpt-5-nano', () => {
+  it('should route short queries to gpt-4o-mini', () => {
     const result = pickModel([{ role: 'user', content: 'Hi' }]);
-    assert.equal(result, 'gpt-5-nano');
+    assert.equal(result, 'gpt-4o-mini');
   });
 
-  it('should route question queries to gpt-5-nano', () => {
+  it('should route question queries to gpt-4o-mini', () => {
     const result = pickModel([{ role: 'user', content: 'What time is it?' }]);
-    assert.equal(result, 'gpt-5-nano');
+    assert.equal(result, 'gpt-4o-mini');
   });
 
-  it('should default to gpt-5-nano for general content', () => {
-    const result = pickModel([{ role: 'user', content: 'Tell me a long story about adventures in space' }]);
-    assert.equal(result, 'gpt-5-nano');
+  it('should default to deepseek-chat for general content', () => {
+    const result = pickModel([{ role: 'user', content: 'Tell me a long story about adventures in space and time and magic and dragons and heroes and kingdoms and epic battles' }]);
+    assert.equal(result, 'deepseek-chat');
   });
 
   it('should handle multiple messages', () => {
@@ -51,12 +51,12 @@ describe('Router — pickModel()', () => {
       { role: 'system', content: 'You are helpful' },
       { role: 'user', content: 'Debug my code' }
     ]);
-    assert.equal(result, 'gpt-5-nano');
+    assert.equal(result, 'claude-opus-4-5-latest');
   });
 
   it('should handle Indonesian language planning queries', () => {
     const result = pickModel([{ role: 'user', content: 'Buat rencana untuk project baru' }]);
-    assert.equal(result, 'deepseek-reasoner');
+    assert.equal(result, 'deepseek-chat');
   });
 });
 

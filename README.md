@@ -10,7 +10,7 @@
 
 <br/>
 
-[![Version](https://img.shields.io/badge/Version-3.0.0-2E9EF7?style=for-the-badge&logo=semver)](https://github.com/mulkymalikuldhrs/jsputer-proxy/releases)
+[![Version](https://img.shields.io/badge/Version-3.0.1-2E9EF7?style=for-the-badge&logo=semver)](https://github.com/mulkymalikuldhrs/jsputer-proxy/releases)
 [![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 [![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express)](https://expressjs.com/)
 [![Z.ai](https://img.shields.io/badge/Z.ai-SDK-FF6B35?style=for-the-badge)](https://www.npmjs.com/package/z-ai-web-dev-sdk)
@@ -83,7 +83,7 @@
 | 🛡️ **Rate Limiting** | Per-IP rate limiting (100 req/min default) | ✅ |
 | 🔑 **API Key Auth** | Optional API key authentication for production | ✅ |
 | ✅ **Input Validation** | Full request validation — roles, lengths, counts | ✅ |
-| 🐳 **Docker Ready** | Easy deployment with containers | ✅ |
+| 🐳 **Docker Ready** | Easy deployment with containers | Planned |
 | 📊 **10MB Payloads** | Large context and document support | ✅ |
 
 ### Quick Start
@@ -159,9 +159,7 @@ curl -X POST http://localhost:3333/chat \
 | Model | Provider | Type | Best For |
 |-------|----------|------|----------|
 | `deepseek-chat` | DeepSeek | Reasoning | General purpose, planning |
-| `deepseek-reasoner` | DeepSeek | Reasoning | Complex reasoning, step-by-step |
 | `gpt-5-chat` | OpenAI | General | Latest OpenAI model |
-| `gpt-5-nano` | OpenAI | Fast | Quick tasks, simple queries |
 | `gpt-4o` | OpenAI | General | Complex reasoning, code |
 | `gpt-4o-mini` | OpenAI | Fast | Quick tasks |
 | `gemini-2.0-flash` | Google | Fast | Balanced performance |
@@ -174,6 +172,8 @@ curl -X POST http://localhost:3333/chat \
 | `mistral-large-2512` | Mistral | General | Mistral's best model |
 | `codestral-2508` | Mistral | Code | Code generation |
 | `qwen-2.5-coder-32b-instruct` | Qwen | Code | Dedicated coding |
+
+> **Note:** `deepseek-reasoner` and `gpt-5-nano` are currently unavailable through Puter.js. See [MODELS.md](MODELS.md) for the latest tested model list.
 
 ### Configuration
 
@@ -202,11 +202,11 @@ API_KEY=your_secret_key
 ### Auto-Routing Logic
 
 ```
-BUILDING (code, implement, debug, refactor, sql...)  →  gpt-5-nano
-PLANNING  (plan, design, strategy, architecture...)   →  deepseek-reasoner
-REASONING (solve, explain, calculate, prove...)       →  deepseek-reasoner
-FAST      (simple question, <100 chars)               →  gpt-5-nano
-DEFAULT                                               →  gpt-5-nano
+BUILDING (code, implement, debug, refactor, sql...)  →  claude-opus-4-5-latest
+PLANNING  (plan, design, strategy, architecture...)   →  deepseek-chat
+REASONING (solve, explain, calculate, prove...)       →  gpt-4o
+FAST      (simple question, <100 chars)               →  gpt-4o-mini
+DEFAULT                                               →  deepseek-chat
 ```
 
 ### Provider Tutorials

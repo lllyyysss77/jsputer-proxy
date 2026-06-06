@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.1] - 2026-03-05
+
+### Fixed
+
+- **Router now uses working models**: Auto-routing previously sent requests to `gpt-5-nano` and `deepseek-reasoner` which are unavailable through Puter.js. Updated routing to use tested, working models:
+  - BUILDING (code tasks) → `claude-opus-4-5-latest`
+  - PLANNING → `deepseek-chat`
+  - REASONING → `gpt-4o`
+  - FAST/short queries → `gpt-4o-mini`
+  - DEFAULT → `deepseek-chat`
+- **Added GET /models endpoint**: Previously documented but missing — now returns the list of available models
+- **Fixed index-https.js cert bug**: Certificate files were read before being generated; now generates certs first if they don't exist
+- **Fixed documentation inconsistencies**:
+  - ARCHITECTURE.md: Updated body parser limit from 50MB to 10MB (changed in v3.0.0)
+  - TUTORIAL.md: Fixed `GATEWAY_PORT` → `PORT` env var name
+  - API.md: Corrected default rate limit from 120 to 100 req/min
+  - README.md: Updated Auto-Routing Logic table to match actual code
+  - README.md: Removed unavailable models (`gpt-5-nano`, `deepseek-reasoner`) from Available Models table, added note about unavailability
+  - README.md: Changed "Docker Ready" status from ✅ to "Planned" (no Dockerfile exists yet)
+- **Updated test suites**: Both `src/middleware.test.js` and `src/router.test.js` now test the correct working model names
+- **Fixed null body validation bug**: `validateChatRequest` and `validateMessagesRequest` now check for null/missing body before destructuring, preventing TypeError crashes
+
 ## [3.0.0] - 2026-03-04
 
 ### Security

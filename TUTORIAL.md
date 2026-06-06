@@ -50,7 +50,7 @@ Your `.env` file should look like this:
 PUTER_AUTH_TOKEN=your_puter_token_here
 
 # ── Server Configuration ─────────────────────────────────
-GATEWAY_PORT=3333
+PORT=3333
 NODE_ENV=development
 
 # ── Logging ──────────────────────────────────────────────

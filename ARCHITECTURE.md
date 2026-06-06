@@ -57,7 +57,7 @@ Puter.js Proxy Server adalah proxy AI terpadu yang berjalan secara lokal, menyed
 
 Server utama menggunakan Express 5.x sebagai web framework. Server ini menangani semua permintaan HTTP masuk dan bertanggung jawab untuk:
 
-- Parsing body request dengan batas 50MB untuk payload besar
+- Parsing body request dengan batas 10MB untuk payload besar
 - Melayani endpoint API kompatibel OpenAI, Anthropic, dan native Puter
 - Manajemen CORS untuk akses lintas domain
 - Error handling terpusat dengan respons JSON yang konsisten
@@ -176,7 +176,7 @@ Endpoint `/chat` adalah endpoint khusus yang secara otomatis memilih model terba
 
 Server mendukung konfigurasi melalui kode untuk penyesuaian yang lebih lanjut:
 
-- Body parser limit (default: 50MB)
+- Body parser limit (default: 10MB)
 - CORS origins
 - Rate limiting rules
 - Logging configuration
