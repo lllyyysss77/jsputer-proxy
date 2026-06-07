@@ -111,7 +111,7 @@ export const PROVIDER_CONFIG = {
     name: 'phind',
     displayName: 'Phind',
     priority: 3,
-    baseUrl: 'https://https://www.phind.com',
+    baseUrl: 'https://www.phind.com',
     timeout: 30000,
     models: [
       { id: 'Phind-70B', type: 'code', description: 'Phind 70B — code specialist', aliases: ['phind-70b'], maxTokens: 4096 }
