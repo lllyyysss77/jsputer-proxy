@@ -131,15 +131,15 @@ export class ProviderManager {
 
     let lastError;
     for (const provider of sorted) {
+      const startTime = Date.now();
       try {
-        const start = Date.now();
         const result = await provider.chat(messages, { ...options, model: modelId });
-        const latency = Date.now() - start;
+        const latency = Date.now() - startTime;
         provider.recordRequest(latency, true);
         provider.healthStatus = 'healthy';
         return { result, provider: provider.name, latency };
       } catch (err) {
-        const latency = Date.now() - start;
+        const latency = Date.now() - startTime;
         provider.recordRequest(latency, false);
         if (provider.healthStatus === 'healthy') {
           provider.healthStatus = 'degraded';

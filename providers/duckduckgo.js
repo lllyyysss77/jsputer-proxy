@@ -197,8 +197,26 @@ export class DuckDuckGoProvider extends BaseProvider {
 
   async checkHealth() {
     try {
-      const vqd = await this._getVQD();
-      return !!vqd;
+      // Simple HEAD request to check if DDG is reachable
+      const response = await fetch('https://duckduckgo.com/', {
+        method: 'HEAD',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+        },
+        signal: AbortSignal.timeout(10000)
+      });
+      if (response.ok) {
+        // DDG is reachable, try VQD as well
+        try {
+          const vqd = await this._getVQD();
+          return !!vqd;
+        } catch {
+          // DDG reachable but VQD failed — still mark as degraded
+          this.healthStatus = 'degraded';
+          return true;
+        }
+      }
+      throw new Error(`DDG returned ${response.status}`);
     } catch (err) {
       throw new Error(`DDG health check failed: ${err.message}`);
     }
