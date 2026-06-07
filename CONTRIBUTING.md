@@ -1,4 +1,4 @@
-# Contributing to JSUPTER AI Gateway
+# Contributing to ProxyGateLLM
 
 <div align="center">
 
@@ -28,7 +28,7 @@ your contributions matter. Let's build the future of AI together!
 | **Maintainer** | Mulky Malikul Dhaher |
 | **Email** | [mulkymalikuldhaher@email.com](mailto:mulkymalikuldhaher@email.com) |
 | **GitHub** | [mulkymalikuldhrs](https://github.com/mulkymalikuldhrs) |
-| **Issues** | [Report a Bug](https://github.com/mulkymalikuldhrs/jsputer-proxy/issues/new?template=bug_report.md) |
+| **Issues** | [Report a Bug](https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues/new?template=bug_report.md) |
 
 ---
 
@@ -55,8 +55,8 @@ This project follows the [Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.
 ```bash
 # 1. Fork the repository
 # 2. Clone your fork
-git clone https://github.com/YOUR-USERNAME/jsputer-proxy.git
-cd jsputer-proxy
+git clone https://github.com/YOUR-USERNAME/ProxyGateLLM.git
+cd ProxyGateLLM
 
 # 3. Install dependencies
 npm install
@@ -77,9 +77,9 @@ git push origin feature/amazing-feature
 
 ### Ways to Contribute
 
-- 🐛 **Bug Reports** — Use the [Bug Report template](https://github.com/mulkymalikuldhrs/jsputer-proxy/issues/new?template=bug_report.md)
-- 💡 **Feature Requests** — Use the [Feature Request template](https://github.com/mulkymalikuldhrs/jsputer-proxy/issues/new?template=feature_request.md)
-- 🌍 **Translations** — Use the [Translation template](https://github.com/mulkymalikuldhrs/jsputer-proxy/issues/new?template=translation.md)
+- 🐛 **Bug Reports** — Use the [Bug Report template](https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues/new?template=bug_report.md)
+- 💡 **Feature Requests** — Use the [Feature Request template](https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues/new?template=feature_request.md)
+- 🌍 **Translations** — Use the [Translation template](https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues/new?template=translation.md)
 - 📝 **Documentation** — Fix typos, add examples, improve clarity, write tutorials
 - 🔧 **Code** — New providers, routing logic, performance, security, features
 - 🎨 **Design** — Improve README, badges, diagrams, visual elements
@@ -125,7 +125,7 @@ We're building a welcoming community of AI enthusiasts, developers, and research
 
 - ⭐ Star the repo if you find it useful
 - 🍴 Fork and experiment
-- 💬 Start a discussion on [GitHub Discussions](https://github.com/mulkymalikuldhrs/jsputer-proxy/discussions)
+- 💬 Start a discussion on [GitHub Discussions](https://github.com/mulkymalikuldhrs/ProxyGateLLM/discussions)
 - 📢 Share with friends and colleagues
 
 ---
@@ -146,8 +146,8 @@ We're building a welcoming community of AI enthusiasts, developers, and research
 
 **Memulai:**
 ```bash
-git clone https://github.com/YOUR-USERNAME/jsputer-proxy.git
-cd jsputer-proxy
+git clone https://github.com/YOUR-USERNAME/ProxyGateLLM.git
+cd ProxyGateLLM
 npm install
 git checkout -b fitur/fitur-baru
 ```
@@ -182,8 +182,8 @@ git checkout -b fitur/fitur-baru
 
 **快速开始：**
 ```bash
-git clone https://github.com/YOUR-USERNAME/jsputer-proxy.git
-cd jsputer-proxy
+git clone https://github.com/YOUR-USERNAME/ProxyGateLLM.git
+cd ProxyGateLLM
 npm install
 git checkout -b feature/new-feature
 ```

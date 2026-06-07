@@ -21,7 +21,7 @@
 
 ## Reporting a Vulnerability
 
-We take the security of JSUPTER AI Gateway seriously. If you believe you have found a security vulnerability, please report it responsibly.
+We take the security of ProxyGateLLM seriously. If you believe you have found a security vulnerability, please report it responsibly.
 
 ### How to Report
 
@@ -93,7 +93,7 @@ Please include the following information in your report:
 
 We appreciate responsible disclosure and will acknowledge contributors who report valid security vulnerabilities in our release notes (unless they prefer to remain anonymous).
 
-Thank you for helping keep JSUPTER AI Gateway and our users safe!
+Thank you for helping keep ProxyGateLLM and our users safe!
 
 ---
 

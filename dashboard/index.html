@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ProxyGateLLM — Dashboard</title>
+  <meta name="description" content="ProxyGateLLM — The Biggest Free Multi-LLM Hub Dashboard">
+  <meta name="theme-color" content="#6366f1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="ProxyGateLLM">
+  <link rel="manifest" href="manifest.json">
+  <style>
+    /* ═══════════════════════════════════════════════════════════
+       ProxyGateLLM Dashboard — Professional Dark Theme
+       Inspired by Vercel / Railway / Linear design systems
+    ═══════════════════════════════════════════════════════════ */
+
+    :root {
+      --bg-primary: #0a0a0a;
+      --bg-secondary: #111111;
+      --bg-tertiary: #1a1a1a;
+      --bg-card: #151515;
+      --bg-hover: #1e1e1e;
+      --border: #222222;
+      --border-subtle: #1a1a1a;
+      --text-primary: #fafafa;
+      --text-secondary: #a1a1aa;
+      --text-muted: #52525b;
+      --accent: #6366f1;
+      --accent-hover: #818cf8;
+      --accent-muted: rgba(99, 102, 241, 0.12);
+      --accent-strong: rgba(99, 102, 241, 0.2);
+      --success: #22c55e;
+      --success-muted: rgba(34, 197, 94, 0.12);
+      --warning: #eab308;
+      --warning-muted: rgba(234, 179, 8, 0.12);
+      --danger: #ef4444;
+      --danger-muted: rgba(239, 68, 68, 0.12);
+      --radius: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      --radius-xl: 16px;
+      --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.5);
+      --transition: 0.15s ease;
+      --transition-slow: 0.3s ease;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+      --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', Consolas, monospace;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { font-size: 16px; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+    body {
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      min-height: 100dvh;
+      overflow-x: hidden;
+      line-height: 1.5;
+    }
+
+    /* ─── Focus & Selection ──────────────────────────────────── */
+    ::selection { background: var(--accent-muted); color: var(--accent-hover); }
+    :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    /* ─── Scrollbar ──────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+    /* ─── Layout ─────────────────────────────────────────────── */
+    .app { display: flex; min-height: 100vh; min-height: 100dvh; }
+
+    /* ─── Sidebar ────────────────────────────────────────────── */
+    .sidebar {
+      width: 250px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 200;
+      transition: transform var(--transition-slow);
+      overflow-y: auto;
+    }
+
+    .sidebar-brand {
+      padding: 20px 20px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .logo-mark {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), #a855f7);
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 16px; color: #fff;
+      box-shadow: 0 2px 8px rgba(99,102,241,0.3);
+    }
+
+    .logo-text h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-primary);
+      letter-spacing: -0.3px;
+      line-height: 1.2;
+    }
+
+    .logo-text span {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .sidebar-nav { padding: 8px 0; flex: 1; }
+
+    .nav-section-label {
+      padding: 16px 20px 6px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      margin: 1px 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all var(--transition);
+      border-radius: var(--radius);
+      font-size: 13px;
+      font-weight: 450;
+      position: relative;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .nav-item.active {
+      background: var(--accent-muted);
+      color: var(--accent-hover);
+    }
+
+    .nav-item.active .nav-icon { color: var(--accent); }
+
+    .nav-icon {
+      font-size: 16px;
+      width: 20px;
+      text-align: center;
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    .nav-item.active .nav-icon { opacity: 1; }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 10px;
+      padding: 1px 6px;
+      border-radius: 10px;
+      background: var(--accent-muted);
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .sidebar-footer-status {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--text-muted);
+    }
+
+    .sidebar-footer-status .health-dot { flex-shrink: 0; }
+
+    .sidebar-footer-copy {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      opacity: 0.6;
+    }
+
+    /* ─── Main Content ───────────────────────────────────────── */
+    .main {
+      flex: 1;
+      margin-left: 250px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .main-header {
+      padding: 16px 28px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .main-header-left {
+      display: flex; align-items: center; gap: 12px;
+    }
+
+    .main-header h2 {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.3px;
+    }
+
+    .header-badge {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: var(--success-muted);
+      color: var(--success);
+      font-weight: 600;
+      display: flex; align-items: center; gap: 4px;
+    }
+
+    .main-header-right {
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .last-refresh {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 24px 28px;
+      overflow-y: auto;
+    }
+
+    .page { display: none; animation: fadeIn 0.2s ease; }
+    .page.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── Page Header ────────────────────────────────────────── */
+    .page-header { margin-bottom: 24px; }
+
+    .page-header h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .page-header p {
+      color: var(--text-secondary);
+      margin-top: 2px;
+      font-size: 14px;
+    }
+
+    /* ─── Stats Grid ─────────────────────────────────────────── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      transition: border-color var(--transition);
+    }
+
+    .stat-card:hover { border-color: var(--accent-muted); }
+
+    .stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .stat-value {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: -1.2px;
+      line-height: 1.1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .stat-sub {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+    }
+
+    .stat-trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 1px 6px;
+      border-radius: 4px;
+      margin-left: 6px;
+    }
+
+    .stat-trend.up { background: var(--success-muted); color: var(--success); }
+    .stat-trend.down { background: var(--danger-muted); color: var(--danger); }
+
+    /* ─── Cards ──────────────────────────────────────────────── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+      transition: border-color var(--transition);
+    }
+
+    .card:hover { border-color: #2a2a2a; }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .card-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ─── Health Indicators ──────────────────────────────────── */
+    .health-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .health-dot.healthy {
+      background: var(--success);
+      box-shadow: 0 0 8px rgba(34,197,94,0.4);
+    }
+
+    .health-dot.healthy::after {
+      content: '';
+      position: absolute;
+      inset: -2px;
+      border-radius: 50%;
+      border: 1px solid rgba(34,197,94,0.2);
+      animation: pulse-ring 2s ease-out infinite;
+    }
+
+    .health-dot.degraded {
+      background: var(--warning);
+      box-shadow: 0 0 8px rgba(234,179,8,0.4);
+    }
+
+    .health-dot.down {
+      background: var(--danger);
+      box-shadow: 0 0 8px rgba(239,68,68,0.4);
+    }
+
+    .health-dot.unknown { background: var(--text-muted); }
+
+    @keyframes pulse-ring {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    /* ─── Provider List ──────────────────────────────────────── */
+    .provider-table-header {
+      display: grid;
+      grid-template-columns: 28px 1.5fr 72px 90px 80px 80px 90px;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 16px;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+
+    .provider-row {
+      display: grid;
+      grid-template-columns: 28px 1.5fr 72px 90px 80px 80px 90px;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      border-radius: var(--radius);
+      font-size: 13px;
+      transition: background var(--transition);
+      cursor: pointer;
+    }
+
+    .provider-row:hover { background: var(--bg-hover); }
+
+    .provider-name {
+      font-weight: 550;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .provider-priority {
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: var(--accent-muted);
+      color: var(--accent);
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .provider-stat {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ─── Provider Detail Cards ──────────────────────────────── */
+    .provider-detail-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 12px;
+      transition: border-color var(--transition);
+    }
+
+    .provider-detail-card:hover { border-color: #2a2a2a; }
+
+    .provider-detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .provider-detail-info {
+      display: flex; align-items: center; gap: 10px;
+    }
+
+    .provider-detail-name {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .provider-detail-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      font-size: 13px;
+    }
+
+    .provider-detail-stat { display: flex; flex-direction: column; gap: 2px; }
+    .provider-detail-stat-label { font-size: 11px; color: var(--text-muted); }
+    .provider-detail-stat-value { font-weight: 550; font-variant-numeric: tabular-nums; }
+
+    .provider-models-list {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    /* ─── Model Grid ─────────────────────────────────────────── */
+    .model-search {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .model-search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+      pointer-events: none;
+    }
+
+    .model-search input {
+      width: 100%;
+      max-width: 420px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px 10px 36px;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      transition: border-color var(--transition);
+    }
+
+    .model-search input:focus { border-color: var(--accent); }
+    .model-search input::placeholder { color: var(--text-muted); }
+
+    .model-count {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: 12px;
+    }
+
+    .model-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 10px;
+    }
+
+    .model-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      transition: all var(--transition);
+      cursor: pointer;
+    }
+
+    .model-card:hover {
+      border-color: var(--accent-muted);
+      background: var(--bg-hover);
+    }
+
+    .model-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .model-id {
+      font-weight: 600;
+      font-size: 13px;
+      font-family: var(--font-mono);
+      word-break: break-all;
+      line-height: 1.4;
+    }
+
+    .model-type-badge {
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: var(--accent-muted);
+      color: var(--accent);
+      white-space: nowrap;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      flex-shrink: 0;
+    }
+
+    .model-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-top: 6px;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .model-providers {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 8px;
+    }
+
+    .model-provider-badge {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 3px;
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    /* ─── Chat Playground ────────────────────────────────────── */
+    .playground-controls {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .playground-controls select {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 8px 12px;
+      color: var(--text-primary);
+      font-size: 13px;
+      outline: none;
+      min-width: 200px;
+      font-family: var(--font-mono);
+      transition: border-color var(--transition);
+    }
+
+    .playground-controls select:focus { border-color: var(--accent); }
+
+    .toggle-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 32px;
+      height: 18px;
+      appearance: none;
+      background: var(--border);
+      border-radius: 9px;
+      outline: none;
+      cursor: pointer;
+      transition: background var(--transition);
+    }
+
+    .toggle-switch:checked { background: var(--accent); }
+
+    .toggle-switch::before {
+      content: '';
+      position: absolute;
+      top: 2px; left: 2px;
+      width: 14px; height: 14px;
+      background: white;
+      border-radius: 50%;
+      transition: transform var(--transition);
+    }
+
+    .toggle-switch:checked::before { transform: translateX(14px); }
+
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 230px);
+      height: calc(100dvh - 230px);
+      min-height: 300px;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      background: var(--bg-primary);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+
+    .chat-empty {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: var(--text-muted);
+      gap: 8px;
+    }
+
+    .chat-empty-icon { font-size: 32px; opacity: 0.4; }
+    .chat-empty-text { font-size: 13px; }
+
+    .chat-msg {
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      max-width: 85%;
+      animation: msgIn 0.15s ease;
+    }
+
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-msg.user {
+      background: var(--accent-muted);
+      margin-left: auto;
+      border-bottom-right-radius: 2px;
+    }
+
+    .chat-msg.assistant {
+      background: var(--bg-tertiary);
+      border-bottom-left-radius: 2px;
+    }
+
+    .chat-msg.system {
+      background: var(--warning-muted);
+      margin: 0 auto;
+      text-align: center;
+      max-width: 90%;
+      font-size: 12px;
+      color: var(--warning);
+    }
+
+    .chat-msg-role {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-weight: 600;
+    }
+
+    .chat-msg.user .chat-msg-role { color: var(--accent); }
+    .chat-msg.assistant .chat-msg-role { color: var(--success); }
+
+    .chat-msg-content {
+      white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.6;
+      word-break: break-word;
+    }
+
+    .streaming-cursor::after {
+      content: '\2588';
+      animation: blink 0.8s step-end infinite;
+      color: var(--accent);
+      font-size: 13px;
+    }
+
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .chat-input-area {
+      display: flex;
+      gap: 8px;
+    }
+
+    .chat-input {
+      flex: 1;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border-color var(--transition);
+    }
+
+    .chat-input:focus { border-color: var(--accent); }
+    .chat-input::placeholder { color: var(--text-muted); }
+
+    /* ─── Buttons ────────────────────────────────────────────── */
+    .btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition);
+      font-family: var(--font-sans);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    .btn-primary:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border-color: #333;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      border: none;
+      padding: 6px 10px;
+    }
+
+    .btn-ghost:hover { color: var(--text-primary); background: var(--bg-hover); }
+
+    .btn-sm { font-size: 11px; padding: 4px 10px; }
+
+    .btn-danger {
+      background: var(--danger-muted);
+      color: var(--danger);
+      border: 1px solid rgba(239,68,68,0.15);
+    }
+
+    .btn-danger:hover { background: rgba(239,68,68,0.2); }
+
+    /* ─── Config / Code Blocks ───────────────────────────────── */
+    .code-block {
+      position: relative;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .code-block-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .code-block pre {
+      padding: 14px 16px;
+      font-size: 12px;
+      line-height: 1.7;
+      overflow-x: auto;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+    }
+
+    .code-block .kw { color: #c678dd; }
+    .code-block .str { color: #98c379; }
+    .code-block .fn { color: #61afef; }
+    .code-block .cm { color: var(--text-muted); }
+    .code-block .op { color: #56b6c2; }
+    .code-block .num { color: #d19a66; }
+
+    .method-badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.3px;
+    }
+
+    .method-get { background: rgba(34,197,94,0.12); color: var(--success); }
+    .method-post { background: var(--accent-muted); color: var(--accent); }
+
+    .endpoint-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .endpoint-row:last-child { border-bottom: none; }
+
+    .endpoint-path {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-primary);
+    }
+
+    .endpoint-desc {
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-left: auto;
+    }
+
+    /* ─── Loading ────────────────────────────────────────────── */
+    .loading-spinner {
+      display: inline-block;
+      width: 14px; height: 14px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .skeleton {
+      background: linear-gradient(90deg, var(--bg-tertiary) 25%, var(--bg-hover) 50%, var(--bg-tertiary) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s ease infinite;
+      border-radius: var(--radius);
+    }
+
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    /* ─── Toast Notifications ────────────────────────────────── */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      font-size: 13px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: toastIn 0.2s ease;
+      max-width: 360px;
+    }
+
+    .toast.success { border-left: 3px solid var(--success); }
+    .toast.error { border-left: 3px solid var(--danger); }
+    .toast.info { border-left: 3px solid var(--accent); }
+
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ─── Mobile Header ──────────────────────────────────────── */
+    .mobile-header {
+      display: none;
+      padding: 10px 16px;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .hamburger {
+      font-size: 20px;
+      cursor: pointer;
+      color: var(--text-primary);
+      padding: 4px;
+      line-height: 1;
+    }
+
+    .mobile-brand { font-size: 14px; font-weight: 600; }
+
+    /* ─── Overlay ────────────────────────────────────────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 199;
+    }
+
+    .sidebar-overlay.active { display: block; }
+
+    /* ─── Empty States ───────────────────────────────────────── */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.4; }
+    .empty-state-title { font-size: 15px; font-weight: 600; color: var(--text-secondary); margin-bottom: 4px; }
+    .empty-state-desc { font-size: 13px; }
+
+    /* ─── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar { transform: translateX(-100%); width: 280px; }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-left: 0; }
+      .mobile-header { display: flex; }
+      .main-header { display: none; }
+      .main-content { padding: 16px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .stat-card { padding: 14px 16px; }
+      .stat-value { font-size: 24px; }
+      .provider-table-header { display: none; }
+      .provider-row {
+        grid-template-columns: 24px 1fr auto;
+        gap: 8px;
+        font-size: 12px;
+      }
+      .provider-row .hide-mobile { display: none; }
+      .chat-container { height: calc(100vh - 200px); height: calc(100dvh - 200px); }
+      .chat-input-area { flex-direction: column; }
+      .playground-controls select { min-width: 140px; }
+      .page-header h2 { font-size: 18px; }
+      .model-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ─── Utility ────────────────────────────────────────────── */
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .text-muted { color: var(--text-muted); }
+    .text-secondary { color: var(--text-secondary); }
+    .text-accent { color: var(--accent); }
+    .text-sm { font-size: 12px; }
+    .text-xs { font-size: 11px; }
+    .font-mono { font-family: var(--font-mono); }
+    .mt-2 { margin-top: 8px; }
+    .mt-4 { margin-top: 16px; }
+    .mb-2 { margin-bottom: 8px; }
+    .mb-4 { margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar Overlay (mobile) -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+      <span class="hamburger" onclick="toggleSidebar()">&#9776;</span>
+      <span class="mobile-brand">ProxyGateLLM</span>
+      <span class="health-dot healthy" id="mobile-health-dot" style="margin-left:auto"></span>
+    </div>
+
+    <!-- Sidebar -->
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-brand">
+        <div class="sidebar-logo">
+          <div class="logo-mark">P</div>
+          <div class="logo-text">
+            <h1>ProxyGateLLM</h1>
+            <span>AI Gateway v4.0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-nav">
+        <div class="nav-section-label">Monitor</div>
+        <div class="nav-item active" data-page="overview" onclick="showPage('overview')">
+          <span class="nav-icon">&#9632;</span> Overview
+        </div>
+        <div class="nav-item" data-page="providers" onclick="showPage('providers')">
+          <span class="nav-icon">&#9881;</span> Providers
+          <span class="nav-badge" id="nav-provider-count">-</span>
+        </div>
+        <div class="nav-item" data-page="models" onclick="showPage('models')">
+          <span class="nav-icon">&#9733;</span> Models
+          <span class="nav-badge" id="nav-model-count">-</span>
+        </div>
+
+        <div class="nav-section-label">Interact</div>
+        <div class="nav-item" data-page="playground" onclick="showPage('playground')">
+          <span class="nav-icon">&#9998;</span> Playground
+        </div>
+
+        <div class="nav-section-label">Integrate</div>
+        <div class="nav-item" data-page="config" onclick="showPage('config')">
+          <span class="nav-icon">&#128268;</span> API Reference
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-footer-status">
+          <span class="health-dot unknown" id="sidebar-health-dot"></span>
+          <span id="sidebar-status-text">Checking...</span>
+        </div>
+        <div class="sidebar-footer-copy">&copy; 2025 ProxyGateLLM &mdash; The Biggest Free Multi-LLM Hub</div>
+      </div>
+    </nav>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="main-header">
+        <div class="main-header-left">
+          <h2 id="main-header-title">Overview</h2>
+          <span class="header-badge" id="gateway-status-badge">
+            <span class="health-dot healthy" style="width:6px;height:6px"></span>
+            Operational
+          </span>
+        </div>
+        <div class="main-header-right">
+          <span class="last-refresh" id="last-refresh">Refreshing...</span>
+          <button class="btn btn-ghost btn-sm" onclick="refreshAll()" title="Refresh">
+            &#8635; Refresh
+          </button>
+        </div>
+      </header>
+
+      <div class="main-content">
+        <!-- ═══ Overview Page ═══ -->
+        <div class="page active" id="page-overview">
+          <div class="page-header">
+            <h2>Dashboard Overview</h2>
+            <p>Real-time status and health of your ProxyGateLLM</p>
+          </div>
+
+          <div class="stats-grid" id="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Active Providers</div>
+              <div class="stat-value" id="stat-providers">&mdash;</div>
+              <div class="stat-sub" id="stat-providers-sub">Loading...</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Available Models</div>
+              <div class="stat-value" id="stat-models">&mdash;</div>
+              <div class="stat-sub">Across all providers</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Uptime</div>
+              <div class="stat-value" id="stat-uptime">&mdash;</div>
+              <div class="stat-sub" id="stat-env">Loading...</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Gateway Version</div>
+              <div class="stat-value" id="stat-version">4.0</div>
+              <div class="stat-sub">The Biggest Free Multi-LLM Hub</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Provider Health Status</div>
+                <div class="card-subtitle">Live health across all enabled providers</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="refreshAll()">&#8635; Refresh</button>
+            </div>
+            <div class="provider-table-header">
+              <span></span>
+              <span>Provider</span>
+              <span>Priority</span>
+              <span>Models</span>
+              <span>Latency</span>
+              <span>Errors</span>
+              <span>Health</span>
+            </div>
+            <div id="provider-health-list">
+              <div class="provider-row">
+                <span class="loading-spinner"></span>
+                <span style="color:var(--text-muted)">Loading providers...</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ Providers Page ═══ -->
+        <div class="page" id="page-providers">
+          <div class="page-header">
+            <h2>Providers</h2>
+            <p>Detailed status, metrics, and health checks for each provider</p>
+          </div>
+          <div id="providers-detail">
+            <div class="empty-state">
+              <div class="loading-spinner" style="width:24px;height:24px;margin:0 auto"></div>
+              <div class="mt-2 text-secondary">Loading providers...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ Models Page ═══ -->
+        <div class="page" id="page-models">
+          <div class="page-header">
+            <h2>Available Models</h2>
+            <p>All models across all providers with routing information</p>
+          </div>
+          <div class="model-search">
+            <span class="model-search-icon">&#128269;</span>
+            <input type="text" placeholder="Search models by name, description, or provider..." id="model-search" oninput="filterModels()">
+            <span class="model-count" id="model-count"></span>
+          </div>
+          <div class="model-grid" id="model-grid">
+            <div class="empty-state">
+              <div class="loading-spinner" style="width:24px;height:24px;margin:0 auto"></div>
+              <div class="mt-2 text-secondary">Loading models...</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ Playground Page ═══ -->
+        <div class="page" id="page-playground">
+          <div class="page-header">
+            <h2>Chat Playground</h2>
+            <p>Test any model through the OpenAI-compatible API</p>
+          </div>
+          <div class="playground-controls">
+            <select id="chat-model">
+              <option value="">Loading models...</option>
+            </select>
+            <select id="chat-format">
+              <option value="openai">OpenAI Format</option>
+              <option value="anthropic">Anthropic Format</option>
+            </select>
+            <label class="toggle-label">
+              <input type="checkbox" class="toggle-switch" id="chat-stream" checked>
+              Stream
+            </label>
+            <button class="btn btn-secondary btn-sm" onclick="clearChat()" style="margin-left:auto">&#128465; Clear</button>
+          </div>
+          <div class="chat-container">
+            <div class="chat-messages" id="chat-messages">
+              <div class="chat-empty">
+                <div class="chat-empty-icon">&#128172;</div>
+                <div class="chat-empty-text">Select a model and start chatting</div>
+              </div>
+            </div>
+            <div class="chat-input-area">
+              <input type="text" class="chat-input" id="chat-input" placeholder="Type your message... (Enter to send)" onkeydown="if(event.key==='Enter'&&!event.shiftKey)sendChat()">
+              <button class="btn btn-primary" id="chat-send" onclick="sendChat()">Send</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══ Config Page ═══ -->
+        <div class="page" id="page-config">
+          <div class="page-header">
+            <h2>API Reference</h2>
+            <p>Endpoints, authentication, and quick-start code examples</p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">API Endpoints</div>
+            </div>
+            <div>
+              <div class="endpoint-row">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/v1/chat/completions</span>
+                <span class="endpoint-desc">OpenAI-compatible chat</span>
+              </div>
+              <div class="endpoint-row">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/v1/messages</span>
+                <span class="endpoint-desc">Anthropic-compatible messages</span>
+              </div>
+              <div class="endpoint-row">
+                <span class="method-badge method-post">POST</span>
+                <span class="endpoint-path">/chat</span>
+                <span class="endpoint-desc">Auto-routed native endpoint</span>
+              </div>
+              <div class="endpoint-row">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/health</span>
+                <span class="endpoint-desc">Health check</span>
+              </div>
+              <div class="endpoint-row">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/status</span>
+                <span class="endpoint-desc">Full gateway status</span>
+              </div>
+              <div class="endpoint-row">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/models</span>
+                <span class="endpoint-desc">Available models list</span>
+              </div>
+              <div class="endpoint-row">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/providers</span>
+                <span class="endpoint-desc">Provider stats</span>
+              </div>
+              <div class="endpoint-row">
+                <span class="method-badge method-get">GET</span>
+                <span class="endpoint-path">/providers/:name/health</span>
+                <span class="endpoint-desc">Provider health check</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Quick Start &mdash; curl</div>
+            </div>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span>Shell</span>
+                <button class="btn btn-ghost btn-sm" onclick="copyCode(this)">&#128203; Copy</button>
+              </div>
+              <pre><span class="cm"># OpenAI-compatible</span>
+curl -X POST <span class="str">http://localhost:3333/v1/chat/completions</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "messages": [{"role": "user", "content": "Hello"}],
+    "model": "auto"
+  }'</span>
+
+<span class="cm"># Anthropic-compatible</span>
+curl -X POST <span class="str">http://localhost:3333/v1/messages</span> \
+  -H <span class="str">"Content-Type: application/json"</span> \
+  -d <span class="str">'{
+    "messages": [{"role": "user", "content": "Hello"}],
+    "model": "claude-opus-4-5-latest"
+  }'</span></pre>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Python &mdash; OpenAI SDK</div>
+            </div>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span>Python</span>
+                <button class="btn btn-ghost btn-sm" onclick="copyCode(this)">&#128203; Copy</button>
+              </div>
+              <pre><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = <span class="fn">OpenAI</span>(
+    base_url=<span class="str">"http://localhost:3333/v1"</span>,
+    api_key=<span class="str">"not-needed"</span>
+)
+
+response = client.chat.completions.<span class="fn">create</span>(
+    model=<span class="str">"auto"</span>,
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Hello!"</span>}]
+)
+<span class="fn">print</span>(response.choices[<span class="num">0</span>].message.content)</pre>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Node.js &mdash; Fetch API</div>
+            </div>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span>JavaScript</span>
+                <button class="btn btn-ghost btn-sm" onclick="copyCode(this)">&#128203; Copy</button>
+              </div>
+              <pre><span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="str">"http://localhost:3333/v1/chat/completions"</span>, {
+  method: <span class="str">"POST"</span>,
+  headers: { <span class="str">"Content-Type"</span>: <span class="str">"application/json"</span> },
+  body: <span class="fn">JSON.stringify</span>({
+    model: <span class="str">"auto"</span>,
+    messages: [{ role: <span class="str">"user"</span>, content: <span class="str">"Hello!"</span> }]
+  })
+});
+
+<span class="kw">const</span> data = <span class="kw">await</span> response.<span class="fn">json</span>();
+console.<span class="fn">log</span>(data.choices[<span class="num">0</span>].message.content);</pre>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Streaming &mdash; Python</div>
+            </div>
+            <div class="code-block">
+              <div class="code-block-header">
+                <span>Python</span>
+                <button class="btn btn-ghost btn-sm" onclick="copyCode(this)">&#128203; Copy</button>
+              </div>
+              <pre><span class="kw">from</span> openai <span class="kw">import</span> OpenAI
+
+client = <span class="fn">OpenAI</span>(
+    base_url=<span class="str">"http://localhost:3333/v1"</span>,
+    api_key=<span class="str">"not-needed"</span>
+)
+
+stream = client.chat.completions.<span class="fn">create</span>(
+    model=<span class="str">"auto"</span>,
+    messages=[{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: <span class="str">"Explain quantum computing"</span>}],
+    stream=<span class="kw">True</span>
+)
+
+<span class="kw">for</span> chunk <span class="kw">in</span> stream:
+    content = chunk.choices[<span class="num">0</span>].delta.content
+    <span class="kw">if</span> content:
+        <span class="fn">print</span>(content, end=<span class="str">""</span>, flush=<span class="kw">True</span>)</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script>
+    /* ═══════════════════════════════════════════════════════════
+       ProxyGateLLM Dashboard — Client Logic
+    ═══════════════════════════════════════════════════════════ */
+
+    const API = window.location.origin;
+    let allModels = [];
+    let allProviders = [];
+    let chatHistory = [];
+    let isStreaming = false;
+
+    const PAGE_TITLES = {
+      overview: 'Overview',
+      providers: 'Providers',
+      models: 'Models',
+      playground: 'Playground',
+      config: 'API Reference'
+    };
+
+    // ── Navigation ──────────────────────────────────────────────
+    function showPage(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      const pageEl = document.getElementById('page-' + page);
+      if (pageEl) pageEl.classList.add('active');
+      const navEl = document.querySelector(`.nav-item[data-page="${page}"]`);
+      if (navEl) navEl.classList.add('active');
+      document.getElementById('main-header-title').textContent = PAGE_TITLES[page] || page;
+      closeSidebar();
+    }
+
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('active');
+    }
+
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebar-overlay').classList.remove('active');
+    }
+
+    // ── Toast Notifications ─────────────────────────────────────
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      const icon = type === 'success' ? '&#10003;' : type === 'error' ? '&#10007;' : '&#8505;';
+      toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s, transform 0.3s';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(20px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // ── Data Loading ────────────────────────────────────────────
+    async function loadStatus() {
+      try {
+        const res = await fetch(API + '/status');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+
+        const enabled = data.providers?.enabled || 0;
+        const total = data.providers?.total || 0;
+        document.getElementById('stat-providers').textContent = enabled;
+        document.getElementById('stat-providers-sub').textContent = `${total} total \u00B7 ${enabled} enabled`;
+
+        document.getElementById('stat-uptime').textContent = formatUptime(data.uptime);
+        document.getElementById('stat-env').textContent = (data.env || 'development') + ' environment';
+        document.getElementById('stat-version').textContent = (data.version || '4.0').replace(/^v/, '');
+
+        // Update sidebar/footer health
+        const healthy = enabled > 0;
+        updateGlobalHealth(healthy);
+      } catch (err) {
+        console.error('Failed to load status:', err);
+        updateGlobalHealth(false);
+      }
+    }
+
+    function updateGlobalHealth(healthy) {
+      const dotClass = healthy ? 'healthy' : 'down';
+      const text = healthy ? 'All systems operational' : 'Gateway unreachable';
+
+      const sidebarDot = document.getElementById('sidebar-health-dot');
+      sidebarDot.className = `health-dot ${dotClass}`;
+      document.getElementById('sidebar-status-text').textContent = text;
+
+      const mobileDot = document.getElementById('mobile-health-dot');
+      mobileDot.className = `health-dot ${dotClass}`;
+
+      const badge = document.getElementById('gateway-status-badge');
+      if (healthy) {
+        badge.style.background = 'var(--success-muted)';
+        badge.style.color = 'var(--success)';
+        badge.innerHTML = `<span class="health-dot healthy" style="width:6px;height:6px"></span> Operational`;
+      } else {
+        badge.style.background = 'var(--danger-muted)';
+        badge.style.color = 'var(--danger)';
+        badge.innerHTML = `<span class="health-dot down" style="width:6px;height:6px"></span> Unreachable`;
+      }
+    }
+
+    async function loadModels() {
+      try {
+        const res = await fetch(API + '/models');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        allModels = data.data || [];
+        document.getElementById('stat-models').textContent = allModels.length;
+        document.getElementById('nav-model-count').textContent = allModels.length;
+        document.getElementById('model-count').textContent = `${allModels.length} model${allModels.length !== 1 ? 's' : ''}`;
+        renderModels(allModels);
+        updateChatModelSelect();
+      } catch (err) {
+        console.error('Failed to load models:', err);
+        document.getElementById('model-grid').innerHTML = renderEmptyState('Failed to load models', err.message);
+      }
+    }
+
+    async function loadProviders() {
+      try {
+        const res = await fetch(API + '/providers');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        allProviders = data.providers || [];
+        document.getElementById('nav-provider-count').textContent = allProviders.length;
+        renderProviderHealth(allProviders);
+        renderProvidersDetail(allProviders);
+      } catch (err) {
+        console.error('Failed to load providers:', err);
+        document.getElementById('provider-health-list').innerHTML = renderEmptyState('Failed to load providers', err.message);
+        document.getElementById('providers-detail').innerHTML = renderEmptyState('Failed to load providers', err.message);
+      }
+    }
+
+    // ── Render Helpers ──────────────────────────────────────────
+    function renderEmptyState(title, desc) {
+      return `<div class="empty-state">
+        <div class="empty-state-icon">&#9888;</div>
+        <div class="empty-state-title">${title}</div>
+        <div class="empty-state-desc">${desc || ''}</div>
+      </div>`;
+    }
+
+    function healthClass(status) {
+      const s = (status || '').toLowerCase();
+      if (s === 'healthy' || s === 'ok' || s === 'up') return 'healthy';
+      if (s === 'degraded' || s === 'warning' || s === 'partial') return 'degraded';
+      if (s === 'down' || s === 'error' || s === 'unhealthy') return 'down';
+      return 'unknown';
+    }
+
+    function healthLabel(status) {
+      const s = (status || '').toLowerCase();
+      if (s === 'healthy' || s === 'ok' || s === 'up') return 'Healthy';
+      if (s === 'degraded' || s === 'warning' || s === 'partial') return 'Degraded';
+      if (s === 'down' || s === 'error' || s === 'unhealthy') return 'Down';
+      return 'Unknown';
+    }
+
+    // ── Provider Renders ────────────────────────────────────────
+    function renderProviderHealth(providers) {
+      const el = document.getElementById('provider-health-list');
+      if (!providers.length) {
+        el.innerHTML = renderEmptyState('No providers found', 'Check your configuration');
+        return;
+      }
+
+      el.innerHTML = providers.map(p => {
+        const hc = healthClass(p.healthStatus);
+        return `<div class="provider-row">
+          <span class="health-dot ${hc}"></span>
+          <span class="provider-name">${esc(p.displayName || p.name)}</span>
+          <span class="provider-priority">P${p.priority ?? '-'}</span>
+          <span class="provider-stat hide-mobile">${p.modelCount ?? '?'} models</span>
+          <span class="provider-stat hide-mobile">${p.avgLatency ?? '-'}ms</span>
+          <span class="provider-stat hide-mobile">${p.errorRate ?? '0%'}</span>
+          <span class="provider-stat">${healthLabel(p.healthStatus)}</span>
+        </div>`;
+      }).join('');
+    }
+
+    function renderProvidersDetail(providers) {
+      const el = document.getElementById('providers-detail');
+      if (!providers.length) {
+        el.innerHTML = renderEmptyState('No providers found', 'Check your configuration');
+        return;
+      }
+
+      el.innerHTML = providers.map(p => {
+        const hc = healthClass(p.healthStatus);
+        const modelsList = (p.models || []).map(m =>
+          `<span class="model-provider-badge">${esc(m)}</span>`
+        ).join('');
+
+        return `<div class="provider-detail-card">
+          <div class="provider-detail-header">
+            <div class="provider-detail-info">
+              <span class="health-dot ${hc}"></span>
+              <span class="provider-detail-name">${esc(p.displayName || p.name)}</span>
+              <span class="provider-priority">Priority ${p.priority ?? '-'}</span>
+              ${p.enabled === false ? '<span style="font-size:11px;color:var(--danger);font-weight:600">DISABLED</span>' : ''}
+            </div>
+            <button class="btn btn-secondary btn-sm" onclick="checkProviderHealth('${esc(p.name)}')">&#8635; Check Health</button>
+          </div>
+          <div class="provider-detail-stats">
+            <div class="provider-detail-stat">
+              <span class="provider-detail-stat-label">Requests</span>
+              <span class="provider-detail-stat-value">${(p.requestCount ?? 0).toLocaleString()}</span>
+            </div>
+            <div class="provider-detail-stat">
+              <span class="provider-detail-stat-label">Errors</span>
+              <span class="provider-detail-stat-value">${p.errorCount ?? 0} <span class="text-muted">(${p.errorRate ?? '0%'})</span></span>
+            </div>
+            <div class="provider-detail-stat">
+              <span class="provider-detail-stat-label">Avg Latency</span>
+              <span class="provider-detail-stat-value">${p.avgLatency ?? '-'}ms</span>
+            </div>
+            <div class="provider-detail-stat">
+              <span class="provider-detail-stat-label">Models</span>
+              <span class="provider-detail-stat-value">${p.modelCount ?? 0}</span>
+            </div>
+            <div class="provider-detail-stat">
+              <span class="provider-detail-stat-label">Health</span>
+              <span class="provider-detail-stat-value" style="color:var(--${hc === 'healthy' ? 'success' : hc === 'degraded' ? 'warning' : hc === 'down' ? 'danger' : 'text-muted'})">${healthLabel(p.healthStatus)}</span>
+            </div>
+            <div class="provider-detail-stat">
+              <span class="provider-detail-stat-label">Last Check</span>
+              <span class="provider-detail-stat-value">${p.lastHealthCheck ? new Date(p.lastHealthCheck).toLocaleTimeString() : 'Never'}</span>
+            </div>
+          </div>
+          ${modelsList ? `<div class="provider-models-list">${modelsList}</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    // ── Model Renders ───────────────────────────────────────────
+    function renderModels(models) {
+      const el = document.getElementById('model-grid');
+      if (!models.length) {
+        el.innerHTML = renderEmptyState('No models found', 'Try a different search or check providers');
+        return;
+      }
+
+      el.innerHTML = models.map(m => {
+        const providers = (m.providers || []).map(p =>
+          `<span class="model-provider-badge">${esc(p)}</span>`
+        ).join('');
+
+        const type = m.type || (m.id || '').includes('embed') ? 'embedding' : 'chat';
+        const typeBadge = type !== 'chat' ? `<span class="model-type-badge">${esc(type)}</span>` : '';
+
+        return `<div class="model-card" onclick="playWithModel('${esc(m.id)}')">
+          <div class="model-card-top">
+            <span class="model-id">${esc(m.id)}</span>
+            ${typeBadge}
+          </div>
+          ${m.description ? `<div class="model-desc">${esc(m.description)}</div>` : ''}
+          ${providers ? `<div class="model-providers">${providers}</div>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    function filterModels() {
+      const q = document.getElementById('model-search').value.toLowerCase().trim();
+      if (!q) {
+        renderModels(allModels);
+        document.getElementById('model-count').textContent = `${allModels.length} model${allModels.length !== 1 ? 's' : ''}`;
+        return;
+      }
+      const filtered = allModels.filter(m =>
+        (m.id || '').toLowerCase().includes(q) ||
+        (m.description || '').toLowerCase().includes(q) ||
+        (m.providers || []).some(p => p.toLowerCase().includes(q))
+      );
+      renderModels(filtered);
+      document.getElementById('model-count').textContent = `${filtered.length} of ${allModels.length} models`;
+    }
+
+    function playWithModel(modelId) {
+      showPage('playground');
+      const select = document.getElementById('chat-model');
+      if (select.querySelector(`option[value="${modelId}"]`)) {
+        select.value = modelId;
+      }
+      document.getElementById('chat-input').focus();
+    }
+
+    function updateChatModelSelect() {
+      const select = document.getElementById('chat-model');
+      const currentVal = select.value;
+      select.innerHTML = allModels.map(m =>
+        `<option value="${esc(m.id)}">${esc(m.id)}${(m.providers || []).length ? ' (' + m.providers.join(', ') + ')' : ''}</option>`
+      ).join('');
+      if (currentVal && select.querySelector(`option[value="${currentVal}"]`)) {
+        select.value = currentVal;
+      } else if (allModels.length) {
+        select.value = allModels[0].id;
+      }
+    }
+
+    // ── Chat Playground ─────────────────────────────────────────
+    function clearChat() {
+      chatHistory = [];
+      renderChatMessages();
+    }
+
+    async function sendChat() {
+      if (isStreaming) return;
+
+      const input = document.getElementById('chat-input');
+      const msg = input.value.trim();
+      if (!msg) return;
+
+      const model = document.getElementById('chat-model').value || 'auto';
+      const format = document.getElementById('chat-format').value;
+      const stream = document.getElementById('chat-stream').checked;
+
+      input.value = '';
+      chatHistory.push({ role: 'user', content: msg });
+      renderChatMessages();
+
+      const sendBtn = document.getElementById('chat-send');
+      sendBtn.disabled = true;
+      sendBtn.innerHTML = '<span class="loading-spinner" style="width:12px;height:12px"></span>';
+
+      const assistantMsg = { role: 'assistant', content: '' };
+      chatHistory.push(assistantMsg);
+      isStreaming = true;
+
+      try {
+        const endpoint = format === 'anthropic' ? '/v1/messages' : '/v1/chat/completions';
+        const messages = chatHistory.filter(m => m.content || m.role === 'user').slice(0, -1);
+
+        if (stream) {
+          const res = await fetch(API + endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model, messages, stream: true })
+          });
+
+          if (!res.ok) {
+            const errBody = await res.text();
+            throw new Error(`HTTP ${res.status}: ${errBody.substring(0, 200)}`);
+          }
+
+          const reader = res.body.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || trimmed.startsWith(':')) continue;
+              if (trimmed.startsWith('data: ')) {
+                const data = trimmed.slice(6);
+                if (data === '[DONE]') continue;
+                try {
+                  const parsed = JSON.parse(data);
+                  const content = parsed.choices?.[0]?.delta?.content ||
+                                  parsed.delta?.text ||
+                                  parsed.content?.[0]?.text || '';
+                  if (content) {
+                    assistantMsg.content += content;
+                    renderChatMessages(true);
+                  }
+                } catch {}
+              }
+            }
+          }
+        } else {
+          const res = await fetch(API + endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model, messages, stream: false })
+          });
+
+          if (!res.ok) {
+            const errBody = await res.text();
+            throw new Error(`HTTP ${res.status}: ${errBody.substring(0, 200)}`);
+          }
+
+          const data = await res.json();
+          if (format === 'anthropic') {
+            assistantMsg.content = data.content?.[0]?.text ||
+                                  data.content?.[0]?.content ||
+                                  JSON.stringify(data, null, 2);
+          } else {
+            assistantMsg.content = data.choices?.[0]?.message?.content ||
+                                  JSON.stringify(data, null, 2);
+          }
+          renderChatMessages();
+        }
+      } catch (err) {
+        assistantMsg.content = 'Error: ' + err.message;
+        renderChatMessages();
+        showToast('Chat request failed: ' + err.message, 'error');
+      }
+
+      isStreaming = false;
+      sendBtn.disabled = false;
+      sendBtn.textContent = 'Send';
+    }
+
+    function renderChatMessages(streaming = false) {
+      const el = document.getElementById('chat-messages');
+      if (!chatHistory.length) {
+        el.innerHTML = `<div class="chat-empty">
+          <div class="chat-empty-icon">&#128172;</div>
+          <div class="chat-empty-text">Select a model and start chatting</div>
+        </div>`;
+        return;
+      }
+
+      el.innerHTML = chatHistory.map((m, i) => {
+        const isStreaming = streaming && i === chatHistory.length - 1 && m.role === 'assistant' && m.content;
+        return `<div class="chat-msg ${m.role}">
+          <div class="chat-msg-role">${m.role}</div>
+          <div class="chat-msg-content${isStreaming ? ' streaming-cursor' : ''}">${esc(m.content || '')}</div>
+        </div>`;
+      }).join('');
+
+      el.scrollTop = el.scrollHeight;
+    }
+
+    // ── Actions ─────────────────────────────────────────────────
+    async function checkProviderHealth(name) {
+      showToast(`Checking health of ${name}...`, 'info');
+      try {
+        const res = await fetch(API + '/providers/' + encodeURIComponent(name) + '/health');
+        const data = await res.json();
+        const isHealthy = data.health === 'healthy' || data.health === 'ok';
+        showToast(
+          `${name}: ${isHealthy ? 'Healthy' : data.health || 'Unknown'}`,
+          isHealthy ? 'success' : 'error'
+        );
+        refreshAll();
+      } catch (err) {
+        showToast('Health check failed: ' + err.message, 'error');
+      }
+    }
+
+    async function refreshAll() {
+      const refreshEl = document.getElementById('last-refresh');
+      refreshEl.textContent = 'Refreshing...';
+      await Promise.allSettled([loadStatus(), loadProviders(), loadModels()]);
+      refreshEl.textContent = 'Updated ' + new Date().toLocaleTimeString();
+    }
+
+    function formatUptime(seconds) {
+      if (!seconds && seconds !== 0) return '\u2014';
+      const d = Math.floor(seconds / 86400);
+      const h = Math.floor((seconds % 86400) / 3600);
+      const m = Math.floor((seconds % 3600) / 60);
+      if (d > 0) return `${d}d ${h}h`;
+      if (h > 0) return `${h}h ${m}m`;
+      return `${m}m`;
+    }
+
+    function esc(text) {
+      const div = document.createElement('div');
+      div.textContent = text || '';
+      return div.innerHTML;
+    }
+
+    function copyCode(btn) {
+      const pre = btn.closest('.code-block').querySelector('pre');
+      const text = pre.textContent;
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '&#10003; Copied!';
+        btn.style.color = 'var(--success)';
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.style.color = '';
+        }, 1500);
+      }).catch(() => {
+        showToast('Failed to copy', 'error');
+      });
+    }
+
+    // ── Keyboard Shortcuts ──────────────────────────────────────
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeSidebar();
+    });
+
+    // ── Auto-refresh (30s) ──────────────────────────────────────
+    let refreshTimer = setInterval(refreshAll, 30000);
+
+    // Pause auto-refresh when tab is hidden
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        clearInterval(refreshTimer);
+      } else {
+        refreshAll();
+        refreshTimer = setInterval(refreshAll, 30000);
+      }
+    });
+
+    // ── Initial Load ────────────────────────────────────────────
+    refreshAll();
+  </script>
+</body>
+</html>

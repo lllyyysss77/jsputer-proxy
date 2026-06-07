@@ -6,7 +6,7 @@
 [![Qwen](https://img.shields.io/badge/Qwen-2.5-615FFF?style=for-the-badge)](https://qwenlm.github.io/)
 [![Puter.js](https://img.shields.io/badge/Puter.js-2.2.5-8B5CF6?style=for-the-badge)](https://docs.puter.com/)
 
-**Complete guide for integrating and using all JSUPTER AI Gateway providers**
+**Complete guide for integrating and using all ProxyGateLLM providers**
 
 </div>
 
@@ -33,11 +33,11 @@
 
 ### Overview
 
-JSUPTER AI Gateway supports three AI providers, each specialized for different task types. The gateway automatically routes your requests to the best provider based on your query content, or you can directly specify which provider to use.
+ProxyGateLLM supports three AI providers, each specialized for different task types. The gateway automatically routes your requests to the best provider based on your query content, or you can directly specify which provider to use.
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                    JSUPTER AI Gateway                     │
+│                    ProxyGateLLM                     │
 │                                                          │
 │  ┌─────────┐   ┌─────────┐   ┌─────────┐              │
 │  │  Z.ai   │   │  Qwen   │   │ Puter   │              │
@@ -70,7 +70,7 @@ The Z.ai provider uses the `z-ai-web-dev-sdk` npm package for advanced AI reason
 
 #### Installation
 
-The Z.ai SDK is included as a dependency when you install JSUPTER AI Gateway:
+The Z.ai SDK is included as a dependency when you install ProxyGateLLM:
 
 ```bash
 npm install z-ai-web-dev-sdk
@@ -412,7 +412,7 @@ Response:
 
 ### Hybrid Execution
 
-For infrastructure tasks, JSUPTER AI Gateway uses a hybrid execution model:
+For infrastructure tasks, ProxyGateLLM uses a hybrid execution model:
 
 ```
 Step 1: Qwen generates technical base answer
@@ -507,7 +507,7 @@ PUTER_AUTH_TOKEN=your_token_here
 
 ### Ringkasan {#ringkasan-id}
 
-JSUPTER AI Gateway mendukung tiga provider AI, masing-masing berspesialisasi untuk tugas yang berbeda. Gateway secara otomatis merutekan permintaan Anda ke provider terbaik berdasarkan konten kueri, atau Anda dapat langsung menentukan provider mana yang ingin digunakan.
+ProxyGateLLM mendukung tiga provider AI, masing-masing berspesialisasi untuk tugas yang berbeda. Gateway secara otomatis merutekan permintaan Anda ke provider terbaik berdasarkan konten kueri, atau Anda dapat langsung menentukan provider mana yang ingin digunakan.
 
 ### Provider Z.ai {#provider-zai-id}
 
@@ -591,7 +591,7 @@ curl -X POST http://localhost:3333/v1/chat/completions \
 
 ### 概述 {#概述-cn}
 
-JSUPTER AI 网关支持三个 AI 提供商，每个专门用于不同的任务类型。网关会根据查询内容自动将您的请求路由到最佳提供商，您也可以直接指定要使用的提供商。
+ProxyGateLLM 网关支持三个 AI 提供商，每个专门用于不同的任务类型。网关会根据查询内容自动将您的请求路由到最佳提供商，您也可以直接指定要使用的提供商。
 
 ### Z.ai 提供商
 

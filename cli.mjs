@@ -13,7 +13,7 @@ const rl = readline.createInterface({
 });
 
 async function chat() {
-  console.log('\n🤖 Puter AI Proxy CLI (type "quit" to exit)\n');
+  console.log('\n🤖 ProxyGateLLM CLI (type "quit" to exit)\n');
   
   const ask = () => {
     rl.question('You: ', async (question) => {

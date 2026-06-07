@@ -2,10 +2,10 @@
 
 <div align="center">
 
-[![Quick Start](https://img.shields.io/badge/Quick_Start-5_Minutes-2E9EF7?style=for-the-badge)](https://github.com/mulkymalikuldhrs/jsputer-proxy)
+[![Quick Start](https://img.shields.io/badge/Quick_Start-5_Minutes-2E9EF7?style=for-the-badge)](https://github.com/mulkymalikuldhrs/ProxyGateLLM)
 [![Node.js](https://img.shields.io/badge/Node.js-22.x-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
 
-**Step-by-step guide to get JSUPTER AI Gateway running**
+**Step-by-step guide to get ProxyGateLLM running**
 
 </div>
 
@@ -24,8 +24,8 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/mulkymalikuldhrs/jsputer-proxy.git
-cd jsputer-proxy
+git clone https://github.com/mulkymalikuldhrs/ProxyGateLLM.git
+cd ProxyGateLLM
 
 # Install dependencies
 npm install
@@ -71,7 +71,7 @@ You should see:
 
 ```
 ╔══════════════════════════════════════════════════════════╗
-║       jsputer-ai-gateway v2.1.0 — Multi-LLM Gateway       ║
+║       proxygatelymm v2.1.0 — Multi-LLM Gateway       ║
 ╠══════════════════════════════════════════════════════════╣
 ║  Server: http://localhost:3333                           ║
 ║  ...                                                     ║
@@ -173,7 +173,7 @@ curl -X POST http://localhost:3333/route \
 
 ### Step 8: Use OpenAI-Compatible Format
 
-JSUPTER is a drop-in replacement for OpenAI API:
+ProxyGateLLM is a drop-in replacement for OpenAI API:
 
 ```javascript
 // Works with any OpenAI SDK — just change the baseURL
@@ -181,7 +181,7 @@ import OpenAI from 'openai';
 
 const client = new OpenAI({
   baseURL: 'http://localhost:3333/v1',
-  apiKey: 'not-needed',  // JSUPTER doesn't require API keys
+  apiKey: 'not-needed',  // ProxyGateLLM doesn't require API keys
 });
 
 const response = await client.chat.completions.create({
@@ -219,8 +219,8 @@ console.log(response.content[0].text);
 
 ```bash
 # Build and run with Docker
-docker build -t jsputer-gateway .
-docker run -p 3333:3333 --env-file .env jsputer-gateway
+docker build -t ProxyGateLLM .
+docker run -p 3333:3333 --env-file .env ProxyGateLLM
 ```
 
 ---
@@ -237,8 +237,8 @@ docker run -p 3333:3333 --env-file .env jsputer-gateway
 ### Langkah 1: Clone & Install
 
 ```bash
-git clone https://github.com/mulkymalikuldhrs/jsputer-proxy.git
-cd jsputer-proxy
+git clone https://github.com/mulkymalikuldhrs/ProxyGateLLM.git
+cd ProxyGateLLM
 npm install
 ```
 
@@ -304,8 +304,8 @@ curl -X POST http://localhost:3333/chat \
 ### 步骤 1：克隆与安装
 
 ```bash
-git clone https://github.com/mulkymalikuldhrs/jsputer-proxy.git
-cd jsputer-proxy
+git clone https://github.com/mulkymalikuldhrs/ProxyGateLLM.git
+cd ProxyGateLLM
 npm install
 ```
 

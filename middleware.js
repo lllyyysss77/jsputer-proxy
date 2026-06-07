@@ -1,5 +1,5 @@
 /**
- * JSUPTER AI Gateway — Middleware
+ * ProxyGateLLM — Middleware
  * Rate limiting, input validation, and API key authentication
  */
 

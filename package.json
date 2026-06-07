@@ -1,7 +1,7 @@
 {
-  "name": "jsputer-ai-gateway",
-  "version": "3.0.1",
-  "description": "Multi-LLM Task-Based Gateway System with auto-routing, streaming, and hybrid execution",
+  "name": "proxygatelymm",
+  "version": "4.0.0",
+  "description": "ProxyGateLLM (formerly jsputer-proxy) — The Biggest Free Multi-LLM Hub. OpenAI/Anthropic-compatible API with 13+ providers, round-robin failover, streaming, MCP server, auto-routing, PWA dashboard, and AI agent. No API keys required for core providers.",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -9,8 +9,11 @@
     "dev": "node --watch index.js",
     "build": "echo 'No build step required — this is a pure Node.js project'",
     "test": "node --test src/**/*.test.js",
-    "lint": "node --check index.js && echo 'Syntax OK'",
-    "clean": "rm -rf node_modules/.cache"
+    "lint": "node --check index.js router.js middleware.js && echo 'Syntax OK'",
+    "clean": "rm -rf node_modules/.cache",
+    "health": "curl -s http://localhost:3333/health | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.status===\"ok\"?\"✓ Healthy\":\"✗ Unhealthy\",j)}catch(e){console.log(\"✗ Parse error\",d)}})'",
+    "models": "curl -s http://localhost:3333/models | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.data.length,\"models available\");j.data.forEach(m=>console.log(\" -\",m.id,\"(\"+m.providers?.join(\", \")+\")\"))}catch(e){console.log(d)}})'",
+    "providers": "curl -s http://localhost:3333/providers | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.enabled,\"/\",j.total,\"providers enabled\");j.providers.forEach(p=>console.log(\" -\",p.displayName,\"[\"+p.healthStatus+\"]\",p.modelCount,\"models\"))}catch(e){console.log(d)}})'"
   },
   "keywords": [
     "llm",
@@ -18,11 +21,42 @@
     "ai",
     "proxy",
     "multi-provider",
+    "multi-llm",
+    "free-llm",
+    "openai-compatible",
+    "anthropic-compatible",
     "puter",
-    "qwen",
-    "zai",
+    "pollinations",
+    "duckduckgo",
+    "openrouter",
+    "groq",
+    "huggingface",
+    "cerebras",
+    "cloudflare",
+    "cohere",
+    "google-ai",
+    "blackbox",
+    "phind",
     "streaming",
-    "auto-routing"
+    "auto-routing",
+    "round-robin",
+    "failover",
+    "chatgpt",
+    "claude",
+    "deepseek",
+    "gemini",
+    "grok",
+    "mistral",
+    "llama",
+    "qwen",
+    "pwa",
+    "dashboard",
+    "ai-agent",
+    "mcp",
+    "saas",
+    "isaas",
+    "api-gateway",
+    "llm-proxy"
   ],
   "author": {
     "name": "Mulky Malikul Dhaher",
@@ -31,19 +65,21 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mulkymalikuldhrs/jsputer-proxy.git"
+    "url": "https://github.com/mulkymalikuldhrs/ProxyGateLLM.git"
   },
   "bugs": {
-    "url": "https://github.com/mulkymalikuldhrs/jsputer-proxy/issues"
+    "url": "https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues"
   },
-  "homepage": "https://github.com/mulkymalikuldhrs/jsputer-proxy#readme",
+  "homepage": "https://github.com/mulkymalikuldhrs/ProxyGateLLM#readme",
   "private": false,
   "license": "MIT",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.2",
     "@heyputer/puter.js": "^2.2.5",
     "dotenv": "^17.2.3",
-    "express": "^5.2.1",
-    "z-ai-web-dev-sdk": "^0.0.17"
+    "express": "^5.2.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }

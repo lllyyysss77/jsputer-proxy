@@ -1,5 +1,5 @@
 /**
- * JSUPTER AI Gateway — Router Tests
+ * ProxyGateLLM — Router Tests
  * Tests for the pickModel routing logic
  */
 

@@ -16,7 +16,6 @@ static const char *blocked_ips[] = {
     "3.22.121.133",   // opencode
     "64.239.123.193", // opencode
     "34.36.57.103",   // Claude GCP
-    "140.82.113.22",  // GitHub
     NULL
 };
 

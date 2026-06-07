@@ -1,5 +1,5 @@
 /**
- * JSUPTER AI Gateway — Test Suite
+ * ProxyGateLLM — Test Suite
  * Basic tests for middleware, router, and endpoint validation
  */
 
