@@ -1,17 +1,17 @@
 {
   "name": "proxygatelymm",
   "version": "5.0.0",
-  "description": "ProxyGateLLM (formerly jsputer-proxy) — The Biggest Free Multi-LLM Hub. OpenAI/Anthropic-compatible API with 13+ providers, round-robin failover, streaming, MCP server, auto-routing, PWA dashboard, and AI agent. No API keys required for core providers.",
-  "main": "index.js",
+  "description": "ProxyGateLLM (formerly jsputer-proxy) \u2014 The Biggest Free Multi-LLM Hub. OpenAI/Anthropic-compatible API with 13+ providers, round-robin failover, streaming, MCP server, auto-routing, PWA dashboard, and AI agent. No API keys required for core providers.",
+  "main": "sdk/index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "build": "echo 'No build step required — this is a pure Node.js project'",
+    "build": "echo 'No build step required \u2014 this is a pure Node.js project'",
     "test": "node --test src/**/*.test.js",
     "lint": "node --check index.js router.js middleware.js && echo 'Syntax OK'",
     "clean": "rm -rf node_modules/.cache",
-    "health": "curl -s http://localhost:3333/health | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.status===\"ok\"?\"✓ Healthy\":\"✗ Unhealthy\",j)}catch(e){console.log(\"✗ Parse error\",d)}})'",
+    "health": "curl -s http://localhost:3333/health | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.status===\"ok\"?\"\u2713 Healthy\":\"\u2717 Unhealthy\",j)}catch(e){console.log(\"\u2717 Parse error\",d)}})'",
     "models": "curl -s http://localhost:3333/models | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.data.length,\"models available\");j.data.forEach(m=>console.log(\" -\",m.id,\"(\"+m.providers?.join(\", \")+\")\"))}catch(e){console.log(d)}})'",
     "providers": "curl -s http://localhost:3333/providers | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.enabled,\"/\",j.total,\"providers enabled\");j.providers.forEach(p=>console.log(\" -\",p.displayName,\"[\"+p.healthStatus+\"]\",p.modelCount,\"models\"))}catch(e){console.log(d)}})'"
   },
@@ -81,5 +81,10 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "exports": {
+    ".": "./sdk/index.js",
+    "./agent": "./agent/index.js",
+    "./sdk": "./sdk/index.js"
   }
 }
