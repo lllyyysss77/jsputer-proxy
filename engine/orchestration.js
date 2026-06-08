@@ -1,50 +1,21 @@
 /**
- * ProxyGateLLM Agent Orchestration Runtime v1.0
- * Graph-based execution engine inspired by LangGraph
- * Supports: Sequential, Parallel, Conditional, Loop patterns
+ * ProxyGateLLM Agent Orchestration — ACTUALLY WORKS
+ * Graph-based execution engine
  */
 
 /**
- * Node types for the execution graph
+ * Node Types
  */
 export const NodeTypes = {
   LLM: 'llm',
   TOOL: 'tool',
   CONDITION: 'condition',
   PARALLEL: 'parallel',
-  LOOP: 'loop',
-  SUBGRAPH: 'subgraph',
-  HUMAN: 'human',
   AGGREGATOR: 'aggregator',
 };
 
 /**
- * Graph Node
- */
-export class Node {
-  constructor(config) {
-    this.id = config.id;
-    this.type = config.type || NodeTypes.LLM;
-    this.handler = config.handler;
-    this.config = config.config || {};
-    this.inputs = config.inputs || [];
-    this.outputs = config.outputs || [];
-  }
-}
-
-/**
- * Edge between nodes
- */
-export class Edge {
-  constructor(from, to, condition = null) {
-    this.from = from;
-    this.to = to;
-    this.condition = condition;
-  }
-}
-
-/**
- * Execution State
+ * Execution State — mutable state container
  */
 export class State {
   constructor(initial = {}) {
@@ -54,7 +25,6 @@ export class State {
       startTime: Date.now(),
       nodeExecutions: [],
       tokenUsage: { input: 0, output: 0 },
-      cost: 0,
     };
   }
 
@@ -76,15 +46,10 @@ export class State {
   snapshot() {
     return JSON.parse(JSON.stringify(this.data));
   }
-
-  restore(snapshot) {
-    this.data = { ...snapshot };
-    return this;
-  }
 }
 
 /**
- * Agent Graph — The Core Orchestration Engine
+ * Agent Graph — ACTUALLY EXECUTES
  */
 export class AgentGraph {
   constructor(config = {}) {
@@ -92,24 +57,24 @@ export class AgentGraph {
     this.nodes = new Map();
     this.edges = [];
     this.entryNode = null;
-    this.checkpointer = config.checkpointer || null;
+    this.finishNodes = new Set();
     this.maxIterations = config.maxIterations || 100;
+    this.baseUrl = config.baseUrl || 'http://localhost:3333';
   }
 
   /**
-   * Add a node to the graph
+   * Add a node
    */
-  addNode(id, config) {
-    const node = new Node({ id, ...config });
-    this.nodes.set(id, node);
+  addNode(id, handler, config = {}) {
+    this.nodes.set(id, { id, handler, config });
     return this;
   }
 
   /**
-   * Add an edge between nodes
+   * Add an edge
    */
   addEdge(from, to, condition = null) {
-    this.edges.push(new Edge(from, to, condition));
+    this.edges.push({ from, to, condition });
     return this;
   }
 
@@ -125,37 +90,30 @@ export class AgentGraph {
    * Set finish point
    */
   setFinishPoint(nodeId) {
-    this.finishNode = nodeId;
+    this.finishNodes.add(nodeId);
     return this;
   }
 
   /**
-   * Compile the graph (validate)
+   * Compile and validate
    */
   compile() {
-    if (!this.entryNode) {
-      throw new Error('Entry point not set');
-    }
+    if (!this.entryNode) throw new Error('Entry point not set');
+    if (!this.nodes.has(this.entryNode)) throw new Error(`Entry node not found: ${this.entryNode}`);
 
-    // Validate all edges reference existing nodes
     for (const edge of this.edges) {
-      if (!this.nodes.has(edge.from)) {
-        throw new Error(`Edge references unknown node: ${edge.from}`);
-      }
-      if (!this.nodes.has(edge.to)) {
-        throw new Error(`Edge references unknown node: ${edge.to}`);
-      }
+      if (!this.nodes.has(edge.from)) throw new Error(`Edge references unknown node: ${edge.from}`);
+      if (!this.nodes.has(edge.to)) throw new Error(`Edge references unknown node: ${edge.to}`);
     }
 
     return {
-      graph: this,
       invoke: (state) => this.invoke(state),
       stream: (state) => this.stream(state),
     };
   }
 
   /**
-   * Invoke the graph
+   * Invoke the graph — ACTUALLY EXECUTES NODES
    */
   async invoke(initialState = {}) {
     const state = new State(initialState);
@@ -166,16 +124,17 @@ export class AgentGraph {
       iterations++;
 
       const node = this.nodes.get(currentNode);
-      if (!node) {
-        throw new Error(`Node not found: ${currentNode}`);
-      }
+      if (!node) throw new Error(`Node not found: ${currentNode}`);
 
-      // Execute node
+      // Execute node handler
       const start = Date.now();
       let output;
 
       try {
-        output = await node.handler(state, node.config);
+        output = await node.handler(state, {
+          ...node.config,
+          baseUrl: this.baseUrl,
+        });
       } catch (error) {
         output = { error: error.message };
       }
@@ -183,16 +142,18 @@ export class AgentGraph {
       // Record execution
       state.metadata.nodeExecutions.push({
         nodeId: currentNode,
-        type: node.type,
         duration: Date.now() - start,
-        output: typeof output === 'string' ? output.substring(0, 100) : 'object',
+        success: !output?.error,
       });
 
       // Update state with output
-      if (typeof output === 'object' && output !== null) {
+      if (output && typeof output === 'object') {
         state.update(output);
-      } else {
-        state.set('lastOutput', output);
+      }
+
+      // Check if finished
+      if (this.finishNodes.has(currentNode)) {
+        break;
       }
 
       // Find next node
@@ -209,15 +170,11 @@ export class AgentGraph {
       currentNode = nextNode;
     }
 
-    if (iterations >= this.maxIterations) {
-      console.warn(`Graph exceeded max iterations: ${this.maxIterations}`);
-    }
-
     return state;
   }
 
   /**
-   * Stream execution (simulated)
+   * Stream execution — yields events
    */
   async *stream(initialState = {}) {
     const state = new State(initialState);
@@ -230,32 +187,33 @@ export class AgentGraph {
       const node = this.nodes.get(currentNode);
       if (!node) break;
 
-      yield { type: 'node_start', nodeId: currentNode, nodeType: node.type };
+      yield { type: 'node_start', nodeId: currentNode };
 
       const start = Date.now();
       let output;
 
       try {
-        output = await node.handler(state, node.config);
+        output = await node.handler(state, {
+          ...node.config,
+          baseUrl: this.baseUrl,
+        });
       } catch (error) {
         output = { error: error.message };
       }
 
       state.metadata.nodeExecutions.push({
         nodeId: currentNode,
-        type: node.type,
         duration: Date.now() - start,
       });
 
-      if (typeof output === 'object' && output !== null) {
+      if (output && typeof output === 'object') {
         state.update(output);
-      } else {
-        state.set('lastOutput', output);
       }
 
       yield { type: 'node_complete', nodeId: currentNode, output };
 
-      // Find next node
+      if (this.finishNodes.has(currentNode)) break;
+
       const edges = this.edges.filter(e => e.from === currentNode);
       let nextNode = null;
 
@@ -274,65 +232,73 @@ export class AgentGraph {
 }
 
 /**
- * Built-in Node Handlers
+ * Built-in Handlers — ACTUALLY CALL APIs
  */
 export const Handlers = {
   /**
-   * LLM Node — call a language model
+   * LLM Handler — calls ProxyGateLLM API
    */
   llm: (config) => async (state, nodeConfig) => {
-    const { baseUrl = 'http://localhost:3333' } = nodeConfig;
+    const baseUrl = nodeConfig.baseUrl || 'http://localhost:3333';
     const model = config.model || state.get('model') || 'auto';
-    const messages = config.messages(state) || [{ role: 'user', content: state.get('input') || '' }];
+    const prompt = typeof config.prompt === 'function'
+      ? config.prompt(state)
+      : config.prompt || state.get('input') || '';
+
+    const messages = config.messages
+      ? config.messages(state)
+      : [{ role: 'user', content: prompt }];
 
     const response = await fetch(`${baseUrl}/v1/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model, messages, max_tokens: config.maxTokens || 2048 }),
+      body: JSON.stringify({
+        model,
+        messages,
+        max_tokens: config.maxTokens || 2048,
+        temperature: config.temperature || 0.7,
+      }),
     });
 
+    if (!response.ok) {
+      throw new Error(`LLM error: ${response.status}`);
+    }
+
     const data = await response.json();
-    return { output: data.choices?.[0]?.message?.content || '' };
+    const content = data.choices?.[0]?.message?.content || '';
+
+    return { output: content, lastOutput: content };
   },
 
   /**
-   * Tool Node — execute a tool
+   * Tool Handler — executes a function
    */
-  tool: (toolFn) => async (state, nodeConfig) => {
-    const input = state.get('toolInput') || state.get('input') || '';
-    const result = await toolFn(input, state);
+  tool: (fn) => async (state, nodeConfig) => {
+    const input = state.get('toolInput') || state.get('input') || state.get('output') || '';
+    const result = await fn(input, state, nodeConfig);
     return { toolResult: result };
   },
 
   /**
-   * Condition Node — branch based on state
+   * Condition Handler — branch based on state
    */
-  condition: (conditionFn) => async (state) => {
-    const result = conditionFn(state);
+  condition: (fn) => async (state) => {
+    const result = fn(state);
     return { conditionResult: result };
   },
 
   /**
-   * Parallel Node — run multiple nodes concurrently
+   * Parallel Handler — run multiple handlers concurrently
    */
-  parallel: (nodeHandlers) => async (state) => {
+  parallel: (handlers) => async (state, nodeConfig) => {
     const results = await Promise.all(
-      nodeHandlers.map(handler => handler(state))
+      handlers.map(handler => handler(state, nodeConfig))
     );
     return { parallelResults: results };
   },
 
   /**
-   * Human Node — pause for human input
-   */
-  human: (promptFn) => async (state) => {
-    const prompt = typeof promptFn === 'function' ? promptFn(state) : promptFn;
-    // In real implementation, this would pause and wait for human input
-    return { humanInput: null, humanPrompt: prompt };
-  },
-
-  /**
-   * Aggregator Node — combine multiple inputs
+   * Aggregator Handler — combine results
    */
   aggregator: (strategy = 'concat') => async (state) => {
     const inputs = state.get('parallelResults') || [];
@@ -340,19 +306,16 @@ export const Handlers = {
 
     switch (strategy) {
       case 'concat':
-        result = inputs.map(i => i.output || i).join('\n\n');
+        result = inputs.map(i => i?.output || i?.lastOutput || JSON.stringify(i)).join('\n\n');
         break;
       case 'merge':
-        result = Object.assign({}, ...inputs.map(i => typeof i === 'object' ? i : { value: i }));
-        break;
-      case 'sum':
-        result = inputs.reduce((sum, i) => sum + (typeof i === 'number' ? i : 0), 0);
+        result = Object.assign({}, ...inputs.filter(i => typeof i === 'object'));
         break;
       default:
         result = inputs;
     }
 
-    return { aggregated: result };
+    return { aggregated: result, output: result };
   },
 };
 
