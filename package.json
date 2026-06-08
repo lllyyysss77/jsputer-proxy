@@ -2,7 +2,7 @@
   "name": "proxygatelymm",
   "version": "5.0.0",
   "description": "ProxyGateLLM (formerly jsputer-proxy) \u2014 The Biggest Free Multi-LLM Hub. OpenAI/Anthropic-compatible API with 13+ providers, round-robin failover, streaming, MCP server, auto-routing, PWA dashboard, and AI agent. No API keys required for core providers.",
-  "main": "sdk/index.js",
+  "main": "engine/index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
@@ -85,6 +85,15 @@
   "exports": {
     ".": "./sdk/index.js",
     "./agent": "./agent/index.js",
-    "./sdk": "./sdk/index.js"
+    "./sdk": "./sdk/index.js",
+    "./engine": "./engine/index.js",
+    "./engine/*": "./engine/*.js",
+    "./multimodal": "./engine/multimodal.js",
+    "./orchestration": "./engine/orchestration.js",
+    "./mcp-gateway": "./engine/mcp-gateway.js",
+    "./a2a": "./engine/a2a-protocol.js",
+    "./tools": "./engine/tools.js",
+    "./observability": "./engine/observability.js",
+    "./marketplace": "./engine/marketplace.js"
   }
 }
