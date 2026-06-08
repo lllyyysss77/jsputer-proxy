@@ -619,7 +619,7 @@
           <div class="logo-mark">P</div>
           <div class="logo-text">
             <h1>ProxyGateLLM</h1>
-            <span>AI Gateway v4.0</span>
+            <span>AI Gateway v5.0</span>
           </div>
         </div>
       </div>
@@ -657,9 +657,20 @@
           <span class="nav-icon">&#128295;</span> MCP
         </div>
 
+        <div class="nav-section-label">Analyze</div>
+        <div class="nav-item" data-page="compare" onclick="showPage('compare')">
+          <span class="nav-icon">&#9878;</span> Compare Models
+        </div>
+        <div class="nav-item" data-page="analytics" onclick="showPage('analytics')">
+          <span class="nav-icon">&#128200;</span> Analytics
+        </div>
+
         <div class="nav-section-label">Configure</div>
         <div class="nav-item" data-page="settings" onclick="showPage('settings')">
           <span class="nav-icon">&#9881;</span> Settings
+        </div>
+        <div class="nav-item" data-page="domain" onclick="showPage('domain')">
+          <span class="nav-icon">&#127760;</span> Custom Domain
         </div>
       </div>
 
@@ -713,7 +724,7 @@
             </div>
             <div class="stat-card">
               <div class="stat-label">Gateway Version</div>
-              <div class="stat-value" id="stat-version">4.0</div>
+              <div class="stat-value" id="stat-version">5.0</div>
               <div class="stat-sub">The Biggest Free Multi-LLM Hub</div>
             </div>
           </div>
@@ -1144,7 +1155,7 @@ curl -X POST <span class="str">${BASE}/mcp</span> \
               <div class="settings-group-title">About</div>
               <div class="settings-row">
                 <div><div class="settings-label">Version</div></div>
-                <div class="text-secondary" id="settings-version">4.0</div>
+                <div class="text-secondary" id="settings-version">5.0</div>
               </div>
               <div class="settings-row">
                 <div><div class="settings-label">License</div></div>
@@ -1163,6 +1174,182 @@ curl -X POST <span class="str">${BASE}/mcp</span> \
 
           <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
         </div>
+
+        <!-- ═══ Compare Models Page ═══ -->
+        <div class="page" id="page-compare">
+          <div class="page-header">
+            <h2>Model Comparison</h2>
+            <p>Send the same prompt to multiple models and compare responses side by side</p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Compare Prompt</div>
+            </div>
+            <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap">
+              <select id="compare-model-1" class="playground-controls" style="min-width:150px">
+                <option value="">Select Model 1</option>
+              </select>
+              <select id="compare-model-2" class="playground-controls" style="min-width:150px">
+                <option value="">Select Model 2</option>
+              </select>
+              <select id="compare-model-3" class="playground-controls" style="min-width:150px">
+                <option value="">Select Model 3 (optional)</option>
+              </select>
+            </div>
+            <textarea id="compare-prompt" rows="4" placeholder="Enter a prompt to compare across models..." style="width:100%;padding:12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-secondary);color:var(--text-primary);font-family:var(--font-sans);resize:vertical"></textarea>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn btn-primary" onclick="runComparison()">Compare Models</button>
+              <button class="btn btn-secondary" onclick="clearComparison()">Clear</button>
+            </div>
+          </div>
+
+          <div id="compare-results" style="display:grid;gap:16px;margin-top:16px"></div>
+        </div>
+
+        <!-- ═══ Analytics Page ═══ -->
+        <div class="page" id="page-analytics">
+          <div class="page-header">
+            <h2>Usage Analytics</h2>
+            <p>Track requests, tokens, and performance across your gateway</p>
+          </div>
+
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Total Requests</div>
+              <div class="stat-value" id="analytics-total">0</div>
+              <div class="stat-sub">All time</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Avg Latency</div>
+              <div class="stat-value" id="analytics-latency">0ms</div>
+              <div class="stat-sub">Per request</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Success Rate</div>
+              <div class="stat-value" id="analytics-success">100%</div>
+              <div class="stat-sub">2xx responses</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Top Model</div>
+              <div class="stat-value" id="analytics-top-model">-</div>
+              <div class="stat-sub">Most requested</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Request Timeline</div>
+                <div class="card-subtitle">Requests over time</div>
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="refreshAnalytics()">&#8635; Refresh</button>
+            </div>
+            <div id="analytics-chart" style="height:200px;display:flex;align-items:flex-end;gap:2px;padding:16px"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div class="card-title">Model Distribution</div>
+                <div class="card-subtitle">Requests per model</div>
+              </div>
+            </div>
+            <div id="analytics-models"></div>
+          </div>
+        </div>
+
+        <!-- ═══ Custom Domain Page ═══ -->
+        <div class="page" id="page-domain">
+          <div class="page-header">
+            <h2>Custom Domain Setup</h2>
+            <p>Point your domain to ProxyGateLLM as a custom base URL</p>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Quick Setup</div>
+            </div>
+            <div class="settings-group">
+              <div class="settings-row">
+                <div>
+                  <div class="settings-label">Your Gateway URL</div>
+                  <div class="settings-desc">Current endpoint URL for API calls</div>
+                </div>
+                <code id="domain-gateway-url" style="font-size:13px;color:var(--accent)">http://localhost:3333</code>
+              </div>
+              <div class="settings-row">
+                <div>
+                  <div class="settings-label">Custom Base URL</div>
+                  <div class="settings-desc">Set a custom URL for your applications</div>
+                </div>
+                <input type="text" id="domain-custom-url" placeholder="https://api.yourdomain.com" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-secondary);color:var(--text-primary);width:300px">
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Integration Examples</div>
+            </div>
+            <div style="display:grid;gap:16px">
+              <div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:8px">Python (OpenAI SDK)</div>
+                <pre style="background:var(--bg-secondary);padding:12px;border-radius:var(--radius);font-size:12px;overflow-x:auto;border:1px solid var(--border)"><code>from openai import OpenAI
+
+client = OpenAI(
+    base_url="<span id="domain-example-url">http://localhost:3333</span>/v1",
+    api_key="your-key-here"  # or leave empty
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello!"}]
+)</code></pre>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:8px">Node.js (OpenAI SDK)</div>
+                <pre style="background:var(--bg-secondary);padding:12px;border-radius:var(--radius);font-size:12px;overflow-x:auto;border:1px solid var(--border)"><code>import OpenAI from 'openai';
+
+const client = new OpenAI({
+    baseURL: "<span id="domain-example-url-2">http://localhost:3333</span>/v1",
+    apiKey: "your-key-here"  // or leave empty
+});
+
+const response = await client.chat.completions.create({
+    model: "gpt-4o",
+    messages: [{ role: "user", content: "Hello!" }]
+});</code></pre>
+              </div>
+              <div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:8px">cURL</div>
+                <pre style="background:var(--bg-secondary);padding:12px;border-radius:var(--radius);font-size:12px;overflow-x:auto;border:1px solid var(--border)"><code>curl <span id="domain-example-curl">http://localhost:3333</span>/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-key" \
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">CORS Configuration</div>
+            </div>
+            <div class="settings-group">
+              <div class="settings-row">
+                <div>
+                  <div class="settings-label">Allowed Origins</div>
+                  <div class="settings-desc">Domains that can access your API (CORS)</div>
+                </div>
+                <input type="text" id="domain-cors-origin" placeholder="* or https://yourdomain.com" style="padding:8px 12px;border:1px solid var(--border);border-radius:var(--radius);background:var(--bg-secondary);color:var(--text-primary);width:300px">
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
@@ -1191,7 +1378,8 @@ curl -X POST <span class="str">${BASE}/mcp</span> \
     const PAGE_TITLES = {
       overview: 'Overview', providers: 'Providers', models: 'Models',
       playground: 'Playground', api: 'API Reference', byoapi: 'BYOAPI',
-      logs: 'Logs', mcp: 'MCP', settings: 'Settings'
+      logs: 'Logs', mcp: 'MCP', settings: 'Settings',
+      compare: 'Model Comparison', analytics: 'Analytics', domain: 'Custom Domain'
     };
 
     // ── Init ───────────────────────────────────────────────────
@@ -1241,11 +1429,27 @@ curl -X POST <span class="str">${BASE}/mcp</span> \
       document.getElementById('main-header-title').textContent = PAGE_TITLES[page] || page;
       closeSidebar();
 
-      // Lazy load MCP data
+      // Lazy load page-specific data
       if (page === 'mcp' && !mcpTools.length) {
         loadMCPTools();
         loadMCPResources();
       }
+      if (page === 'compare') {
+        // Populate model dropdowns
+        const selects = ['compare-model-1', 'compare-model-2', 'compare-model-3'];
+        selects.forEach(id => {
+          const sel = document.getElementById(id);
+          if (sel && sel.options.length <= 1 && allModels.length) {
+            allModels.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m.id; opt.textContent = m.id;
+              sel.appendChild(opt);
+            });
+          }
+        });
+      }
+      if (page === 'analytics') refreshAnalytics();
+      if (page === 'domain') initDomainPage();
     }
 
     function toggleSidebar() {
@@ -1351,7 +1555,7 @@ curl -X POST <span class="str">${BASE}/mcp</span> \
         document.getElementById('stat-providers-sub').textContent = `${total} total \u00B7 ${enabled} enabled`;
         document.getElementById('stat-uptime').textContent = formatUptime(data.uptime);
         document.getElementById('stat-env').textContent = (data.env || 'development') + ' environment';
-        const ver = (data.version || '4.0').replace(/^v/, '');
+        const ver = (data.version || '5.0').replace(/^v/, '');
         document.getElementById('stat-version').textContent = ver;
         document.getElementById('settings-version').textContent = ver;
 
@@ -2055,6 +2259,130 @@ curl -X POST <span class="str">${BASE}/mcp</span> \
         btn.style.color = 'var(--success)';
         setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; }, 1500);
       }).catch(() => showToast('Failed to copy', 'error'));
+    }
+
+    // ── Model Comparison ─────────────────────────────────────────
+    async function runComparison() {
+      const m1 = document.getElementById('compare-model-1').value;
+      const m2 = document.getElementById('compare-model-2').value;
+      const m3 = document.getElementById('compare-model-3').value;
+      const prompt = document.getElementById('compare-prompt').value.trim();
+      if (!prompt) { showToast('Enter a prompt first', 'warning'); return; }
+      const models = [m1, m2, m3].filter(Boolean);
+      if (models.length < 2) { showToast('Select at least 2 models', 'warning'); return; }
+
+      const container = document.getElementById('compare-results');
+      container.innerHTML = models.map(m => `
+        <div class="card" id="compare-${m.replace(/[^a-z0-9]/g,'-')}">
+          <div class="card-header"><div class="card-title">${m}</div><span class="loading-spinner"></span></div>
+          <div class="card-body"><p style="color:var(--text-muted)">Generating...</p></div>
+        </div>
+      `).join('');
+
+      for (const model of models) {
+        const cardId = 'compare-' + model.replace(/[^a-z0-9]/g,'-');
+        const card = document.getElementById(cardId);
+        const body = card.querySelector('.card-body');
+        const start = Date.now();
+        try {
+          const res = await fetch(API + '/v1/chat/completions', {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model, messages: [{ role: 'user', content: prompt }], max_tokens: 1024 })
+          });
+          const data = await res.json();
+          const elapsed = Date.now() - start;
+          const content = data.choices?.[0]?.message?.content || data.error || 'No response';
+          const tokens = data.usage?.total_tokens || '?';
+          body.innerHTML = `<p style="white-space:pre-wrap;font-size:13px">${escapeHtml(content)}</p>
+            <div style="margin-top:12px;font-size:12px;color:var(--text-muted);display:flex;gap:16px">
+              <span>⏱ ${elapsed}ms</span><span>🔑 ${tokens} tokens</span>
+            </div>`;
+          card.querySelector('.card-header span:last-child').remove();
+        } catch (e) {
+          body.innerHTML = `<p style="color:var(--danger)">Error: ${e.message}</p>`;
+          card.querySelector('.card-header span:last-child').remove();
+        }
+      }
+    }
+
+    function clearComparison() {
+      document.getElementById('compare-prompt').value = '';
+      document.getElementById('compare-results').innerHTML = '';
+    }
+
+    // ── Analytics ───────────────────────────────────────────────
+    function refreshAnalytics() {
+      fetch(API + '/logs?limit=500').then(r => r.json()).then(data => {
+        const logs = data.logs || [];
+        const total = logs.length;
+        const avgLat = total ? Math.round(logs.reduce((s,l) => s + (l.latency_ms||0), 0) / total) : 0;
+        const success = total ? Math.round(logs.filter(l => l.status < 400).length / total * 100) : 100;
+        const models = {};
+        logs.forEach(l => { models[l.model] = (models[l.model]||0) + 1; });
+        const topModel = Object.entries(models).sort((a,b) => b[1]-a[1])[0];
+
+        document.getElementById('analytics-total').textContent = total;
+        document.getElementById('analytics-latency').textContent = avgLat + 'ms';
+        document.getElementById('analytics-success').textContent = success + '%';
+        document.getElementById('analytics-top-model').textContent = topModel ? topModel[0] : '-';
+
+        // Timeline chart (last 20 time buckets)
+        const chart = document.getElementById('analytics-chart');
+        const buckets = new Array(20).fill(0);
+        const now = Date.now();
+        const bucketSize = 300000; // 5 min
+        logs.forEach(l => {
+          const age = now - new Date(l.timestamp).getTime();
+          const idx = 19 - Math.floor(age / bucketSize);
+          if (idx >= 0 && idx < 20) buckets[idx]++;
+        });
+        const maxB = Math.max(...buckets, 1);
+        chart.innerHTML = buckets.map(b => {
+          const h = Math.max(4, (b/maxB) * 160);
+          return `<div style="flex:1;background:var(--accent);height:${h}px;border-radius:2px;min-width:8px" title="${b} requests"></div>`;
+        }).join('');
+
+        // Model distribution
+        const modelsDiv = document.getElementById('analytics-models');
+        const sorted = Object.entries(models).sort((a,b) => b[1]-a[1]).slice(0,10);
+        const maxM = sorted[0]?.[1] || 1;
+        modelsDiv.innerHTML = sorted.map(([name, count]) => `
+          <div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)">
+            <span style="min-width:140px;font-size:13px;font-family:var(--font-mono)">${name}</span>
+            <div style="flex:1;height:8px;background:var(--bg-secondary);border-radius:4px;overflow:hidden">
+              <div style="height:100%;width:${count/maxM*100}%;background:var(--accent);border-radius:4px"></div>
+            </div>
+            <span style="font-size:12px;color:var(--text-muted);min-width:40px;text-align:right">${count}</span>
+          </div>
+        `).join('') || '<p style="color:var(--text-muted);padding:16px">No data yet. Make some API calls first.</p>';
+      }).catch(() => {});
+    }
+
+    // ── Custom Domain ───────────────────────────────────────────
+    function initDomainPage() {
+      const gwUrl = document.getElementById('domain-gateway-url');
+      const exUrl = document.getElementById('domain-example-url');
+      const exUrl2 = document.getElementById('domain-example-url-2');
+      const exCurl = document.getElementById('domain-example-curl');
+      const customInput = document.getElementById('domain-custom-url');
+      if (gwUrl) gwUrl.textContent = API;
+      if (exUrl) exUrl.textContent = API;
+      if (exUrl2) exUrl2.textContent = API;
+      if (exCurl) exCurl.textContent = API;
+      if (customInput) {
+        customInput.addEventListener('input', () => {
+          const val = customInput.value.replace(/\/+$/, '') || API;
+          if (exUrl) exUrl.textContent = val;
+          if (exUrl2) exUrl2.textContent = val;
+          if (exCurl) exCurl.textContent = val;
+        });
+      }
+      // Load saved CORS setting
+      const corsInput = document.getElementById('domain-cors-origin');
+      if (corsInput) {
+        const saved = localStorage.getItem('pgllm-cors-origin');
+        if (saved) corsInput.value = saved;
+      }
     }
 
     // ── Keyboard Shortcuts ──────────────────────────────────────

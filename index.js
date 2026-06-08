@@ -20,7 +20,7 @@ config({ path: join(__dirname, '.env') });
 
 const PORT = parseInt(process.env.PORT || '3333', 10);
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '';
-const VERSION = '4.0.0';
+const VERSION = '5.0.0';
 
 // ── Initialize Multi-Provider System ──────────────────────────────────────
 
@@ -61,6 +61,41 @@ app.use((req, res, next) => {
   res.removeHeader('X-Powered-By');
   next();
 });
+
+// ── Request Logging ───────────────────────────────────────────────────────
+const requestLog = [];
+const MAX_LOG_SIZE = 1000;
+
+function logRequest(req, res, next) {
+  const start = Date.now();
+  const originalJson = res.json.bind(res);
+  
+  res.json = function(data) {
+    const latency = Date.now() - start;
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      method: req.method,
+      path: req.path,
+      model: req.body?.model || 'auto',
+      status: res.statusCode,
+      latency_ms: latency,
+      ip: req.ip || req.connection?.remoteAddress || 'unknown'
+    };
+    
+    requestLog.unshift(logEntry);
+    if (requestLog.length > MAX_LOG_SIZE) requestLog.pop();
+    
+    if (process.env.LOG_LEVEL === 'debug') {
+      console.log(`[REQ] ${logEntry.method} ${logEntry.path} → ${logEntry.status} (${logEntry.latency_ms}ms) model=${logEntry.model}`);
+    }
+    
+    return originalJson(data);
+  };
+  
+  next();
+}
+
+app.use(logRequest);
 
 // Rate limiting on API routes
 app.use('/v1', rateLimiter);
@@ -465,6 +500,19 @@ const dashboardPath = join(__dirname, 'dashboard');
 if (existsSync(dashboardPath)) {
   app.use('/dashboard', express.static(dashboardPath));
 }
+
+// ── Request Logs Endpoint ────────────────────────────────────────────────
+
+app.get('/logs', (req, res) => {
+  const limit = parseInt(req.query.limit || '100', 10);
+  const offset = parseInt(req.query.offset || '0', 10);
+  res.json({
+    total: requestLog.length,
+    offset,
+    limit,
+    logs: requestLog.slice(offset, offset + limit)
+  });
+});
 
 // ── 404 Handler ───────────────────────────────────────────────────────────
 

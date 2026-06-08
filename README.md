@@ -1,514 +1,335 @@
-<div align="center">
+# ProxyGateLLM v5.0.0
 
-# ProxyGateLLM — The Biggest Free Multi-LLM Hub
-*formerly jsputer-proxy*
+<p align="center">
+  <strong>The Biggest Free Multi-LLM Hub</strong><br>
+  OpenAI/Anthropic-compatible API gateway with 378+ models across 13 providers
+</p>
 
-**OpenAI/Anthropic-compatible API with 9+ free providers, round-robin failover, streaming, auto-routing, PWA dashboard, and AI agent. No API keys required for core providers.**
+<p align="center">
+  <a href="#quick-start">Quick Start</a> •
+  <a href="#features">Features</a> •
+  <a href="#api-reference">API</a> •
+  <a href="#dashboard">Dashboard</a> •
+  <a href="#providers">Providers</a> •
+  <a href="https://github.com/mulkymalikuldhrs/ProxyGateLLM">GitHub</a>
+</p>
 
-<br/>
+---
 
-[![MIT License](https://img.shields.io/badge/License-MIT-F7DF1E?style=for-the-badge)](LICENSE)
-[![Node.js](https://img.shields.io/badge/Node.js-%3E%3D18-339933?style=for-the-badge&logo=node.js)](https://nodejs.org/)
-[![Version](https://img.shields.io/badge/Version-4.0.0-6366f1?style=for-the-badge&logo=semver)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/releases)
-[![GitHub Stars](https://img.shields.io/github/stars/mulkymalikuldhrs/ProxyGateLLM?style=for-the-badge&logo=github&color=FFD700)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/stargazers)
+## What is ProxyGateLLM?
 
-<br/>
+ProxyGateLLM is a **free, self-hosted LLM gateway** that provides a single OpenAI/Anthropic-compatible endpoint to access **378+ AI models** from **13 providers** — no API keys required for end users.
 
-</div>
+Think of it as the **"Cloudflare Workers for AI"** — a reverse proxy that wraps multiple free LLM providers into one unified API.
+
+### Why ProxyGateLLM?
+
+| Feature | ProxyGateLLM | OpenRouter | LiteLLM |
+|---------|-------------|------------|---------|
+| Free access (no API key) | ✅ | ❌ | ❌ |
+| Self-hosted | ✅ | ❌ | ✅ |
+| MCP Server built-in | ✅ | ❌ | ❌ |
+| AI Agent built-in | ✅ | ❌ | ❌ |
+| Models available | 378+ | 300+ | 100+ |
+| OpenAI-compatible | ✅ | ✅ | ✅ |
+| Dashboard | ✅ | ✅ | ❌ |
+| Custom domain | ✅ | ✅ | ✅ |
+
+---
+
+## Quick Start
+
+### 1. Clone & Install
+
+```bash
+git clone https://github.com/mulkymalikuldhrs/ProxyGateLLM.git
+cd ProxyGateLLM
+npm install
+```
+
+### 2. Configure (optional)
+
+```bash
+cp .env.example .env
+# Edit .env with your preferences (all optional)
+```
+
+### 3. Start
+
+```bash
+npm start
+# or
+node index.js
+```
+
+### 4. Use
+
+```python
+# Python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="http://localhost:3333/v1",
+    api_key="your-key-here"  # or leave empty
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[{"role": "user", "content": "Hello!"}]
+)
+```
+
+```bash
+# cURL
+curl http://localhost:3333/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o",
+    "messages": [{"role": "user", "content": "Hello!"}]
+  }'
+```
 
 ---
 
 ## Features
 
-- 🆓 **100% Free** — No API keys required for core providers (Pollinations, DuckDuckGo, Puter)
-- 🔄 **Multi-Provider** — 9 providers with automatic failover and round-robin load balancing
-- 🌊 **Streaming** — Real-time SSE streaming for all endpoints
-- 🎯 **Auto-Routing** — Intelligent model selection based on query type
-- 📊 **Dashboard** — Professional PWA dashboard with real-time monitoring
-- 🤖 **AI Agent** — Standalone AI agent without backend
-- 🔌 **Compatible** — Drop-in replacement for OpenAI and Anthropic APIs
-- 🏥 **Health Checks** — Automatic provider health monitoring
-- 🔄 **Auto-Sync** — Automatic model list synchronization
-- 🐳 **Portable** — Single Node.js process, no database needed
+### Core Features
+
+- **378+ Models** — Access GPT-4o, Claude, Gemini, Llama, Mistral, and more
+- **13 Providers** — Pollinations, OpenRouter, Groq, Google AI, and more
+- **OpenAI-Compatible API** — Drop-in replacement for OpenAI SDK
+- **Anthropic-Compatible API** — Use with Claude SDK
+- **Streaming** — Real-time response streaming via SSE
+- **Auto-Routing** — Smart model selection based on task type
+- **Failover** — Automatic provider switching on failure
+- **Rate Limiting** — Built-in per-IP rate limiting
+- **MCP Server** — Model Context Protocol support
+- **AI Agent** — Built-in agent capabilities
+
+### Dashboard Features
+
+- **Overview** — Real-time provider health monitoring
+- **Providers** — Detailed provider status and configuration
+- **Models** — Full model catalog with filtering
+- **Playground** — Interactive chat with any model
+- **Compare** — Side-by-side model comparison
+- **Analytics** — Request tracking and performance metrics
+- **API Reference** — Complete API documentation
+- **Custom Domain** — Domain setup wizard
+- **Settings** — Gateway configuration
+
+---
+
+## API Reference
+
+### OpenAI-Compatible Endpoint
+
+```
+POST /v1/chat/completions
+```
+
+**Request Body:**
+
+```json
+{
+  "model": "gpt-4o",
+  "messages": [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Hello!"}
+  ],
+  "stream": false,
+  "temperature": 0.7,
+  "max_tokens": 1024
+}
+```
+
+**Response:**
+
+```json
+{
+  "id": "chatcmpl-123",
+  "object": "chat.completion",
+  "created": 1234567890,
+  "model": "gpt-4o",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Hello! How can I help you today?"
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 10,
+    "completion_tokens": 8,
+    "total_tokens": 18
+  }
+}
+```
+
+### Anthropic-Compatible Endpoint
+
+```
+POST /v1/messages
+```
+
+### Other Endpoints
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/health` | Health check |
+| GET | `/status` | Server + provider status |
+| GET | `/models` | List all available models |
+| GET | `/providers` | Provider details & stats |
+| GET | `/logs` | Request logs |
+| POST | `/mcp` | MCP (Model Context Protocol) |
+| GET | `/dashboard` | Web dashboard |
+
+---
+
+## Providers
+
+| Provider | Models | Status |
+|----------|--------|--------|
+| Puter.js SDK | 14 | ⚠️ Rate limited |
+| Pollinations AI | 6 | ✅ Healthy |
+| OpenRouter Free | 337 | ✅ Healthy |
+| Groq | 16 | ✅ Healthy |
+| Google AI Studio | 4 | ✅ Healthy |
+| G4F/FreeGPT | 3 | ✅ Healthy |
+| Blackbox AI | 2 | ✅ Healthy |
+| Phind | 1 | ✅ Healthy |
+| HuggingFace | 3 | ⚠️ Unknown |
+| Cerebras | 3 | ⚠️ Unknown |
+| Cloudflare | 4 | ⚠️ Unknown |
+| Cohere | 3 | ⚠️ Unknown |
+
+---
+
+## Configuration
+
+All configuration is via environment variables in `.env`:
+
+```bash
+# Server
+PORT=3333
+NODE_ENV=production
+
+# CORS
+CORS_ORIGIN=*  # or specific domain
+
+# Rate Limiting
+RATELIMIT_WINDOW_MS=60000
+RATELIMIT_MAX_REQUESTS=100
+
+# Logging
+LOG_LEVEL=info  # info or debug
+
+# API Key (optional)
+API_KEY=your-secret-key
+```
 
 ---
 
 ## Architecture
 
 ```
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌────────────────────────────────────┐
-│  Client  │────▶│  Express │────▶│  Router  │────▶│       Provider Manager            │
-│ (any SDK)│     │  Server  │     │ (Smart)  │     │  (round-robin + failover)         │
-└──────────┘     └──────────┘     └──────────┘     └────────────────────────────────────┘
-                                                        │
-                                          ┌─────────────┼─────────────┐
-                                          │             │             │
-                                    ┌─────┴─────┐ ┌─────┴─────┐ ┌─────┴─────┐
-                                    │  P1: Free  │ │  P2: Key   │ │  P3: Fragile│
-                                    │  No Auth   │ │  Free Key  │ │  Unstable  │
-                                    └─────┬─────┘ └─────┬─────┘ └─────┬─────┘
-                                          │             │             │
-                                   Puter  Pollinations  Groq     Blackbox
-                                   DDG    OpenRouter    HF       Phind
-                                          G4F
+┌─────────────────────────────────────────────────────────┐
+│                    ProxyGateLLM                          │
+├─────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐     │
+│  │   Express   │  │   Router    │  │  Rate Limit │     │
+│  │   Server    │  │   (Smart)   │  │  (Per-IP)   │     │
+│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘     │
+│         │                │                │              │
+│  ┌──────┴────────────────┴────────────────┴──────┐     │
+│  │              Provider Manager                  │     │
+│  │         (Auto-failover & Health)               │     │
+│  └──────┬──────┬──────┬──────┬──────┬──────┬─────┘     │
+│         │      │      │      │      │      │            │
+│  ┌──────┴┐ ┌───┴──┐ ┌─┴───┐ ┌┴────┐ ┌┴────┐ ┌┴────┐  │
+│  │Pollin.│ │OpenR.│ │Groq │ │G4F  │ │BB AI│ │More│  │
+│  └───────┘ └──────┘ └─────┘ └─────┘ └─────┘ └────┘  │
+└─────────────────────────────────────────────────────────┘
+         ↑
+    Client Request
+    POST /v1/chat/completions
+    { model: "gpt-4o", messages: [...] }
 ```
 
 ---
 
-## Providers
+## Custom Domain Setup
 
-| Provider | Priority | Auth Required | Models | Status |
-|----------|----------|--------------|--------|--------|
-| **Puter.js SDK** | P1 | Optional | 14+ | ✅ Stable |
-| **Pollinations AI** | P1 | None | 5+ | ✅ Stable |
-| **DuckDuckGo AI** | P1 | None | 4+ | ✅ Stable |
-| **OpenRouter Free** | P1 | Optional | Auto-sync | ✅ Stable |
-| **Groq** | P2 | Free API Key | 4+ | ✅ Fast |
-| **HuggingFace** | P2 | Free API Key | 3+ | ⚡ Inference |
-| **G4F/FreeGPT** | P2 | None | 3+ | ⚡ Python |
-| **Blackbox AI** | P3 | None | 2+ | 🔶 Fragile |
-| **Phind** | P3 | None | 1+ | 🔶 Fragile |
+1. Deploy ProxyGateLLM to your server
+2. Point your domain to the server (DNS A record)
+3. Set `CORS_ORIGIN=https://yourdomain.com` in `.env`
+4. Use `https://yourdomain.com/v1` as your base URL
 
-> **Priority levels:** P1 = no auth needed, P2 = free API key, P3 = may be unstable
+### Examples
+
+```python
+# Python
+client = OpenAI(base_url="https://api.yourdomain.com/v1")
+
+# Node.js
+const client = new OpenAI({ baseURL: "https://api.yourdomain.com/v1" });
+
+# cURL
+curl https://api.yourdomain.com/v1/chat/completions ...
+```
 
 ---
 
-## Quick Start
-
-### Install
+## Development
 
 ```bash
-# Clone the repository
-git clone https://github.com/mulkymalikuldhrs/ProxyGateLLM.git
-cd ProxyGateLLM
-
 # Install dependencies
 npm install
-```
 
-### Configure
-
-```bash
-# Copy the example environment file
-cp .env.example .env
-
-# Edit .env — core providers work without any API keys!
-# Optionally add free API keys for more providers:
-#   GROQ_API_KEY=       (https://console.groq.com)
-#   HUGGINGFACE_API_KEY= (https://huggingface.co/settings/tokens)
-#   OPENROUTER_API_KEY=  (https://openrouter.ai/keys)
-```
-
-### Run
-
-```bash
-# Start the server
-npm start
-
-# Or use development mode with auto-reload
+# Run in dev mode (auto-restart)
 npm run dev
-```
 
-The gateway starts at `http://localhost:3333` by default.
+# Run tests
+npm test
 
-### Verify
+# Lint
+npm run lint
 
-```bash
-# Health check
-curl http://localhost:3333/health
+# Check health
+npm run health
 
-# List available models
-curl http://localhost:3333/models
-
-# Quick chat test
-curl -X POST http://localhost:3333/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{"model":"auto","messages":[{"role":"user","content":"Hello!"}]}'
-```
-
----
-
-## API Usage
-
-### OpenAI-Compatible Endpoint
-
-**cURL:**
-```bash
-curl -X POST http://localhost:3333/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-4o",
-    "messages": [
-      {"role": "user", "content": "Explain quantum computing in 3 sentences"}
-    ]
-  }'
-```
-
-**Python (OpenAI SDK):**
-```python
-from openai import OpenAI
-
-client = OpenAI(
-    base_url="http://localhost:3333/v1",
-    api_key="not-needed"  # No API key required for core providers
-)
-
-response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Hello, ProxyGateLLM!"}]
-)
-
-print(response.choices[0].message.content)
-```
-
-**JavaScript (Fetch):**
-```javascript
-const response = await fetch('http://localhost:3333/v1/chat/completions', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    model: 'gpt-4o',
-    messages: [{ role: 'user', content: 'Hello, ProxyGateLLM!' }]
-  })
-});
-
-const data = await response.json();
-console.log(data.choices[0].message.content);
-```
-
-### Anthropic-Compatible Endpoint
-
-```bash
-curl -X POST http://localhost:3333/v1/messages \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "claude-opus-4-5-latest",
-    "max_tokens": 1024,
-    "messages": [
-      {"role": "user", "content": "Write a Python function to check if a number is prime"}
-    ]
-  }'
-```
-
-### Auto-Routing
-
-Use `model: "auto"` to let ProxyGateLLM intelligently pick the best model:
-
-```bash
-curl -X POST http://localhost:3333/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{"model":"auto","messages":[{"role":"user","content":"Build a REST API"}]}'
-```
-
-**Auto-routing logic:**
-| Task Type | Keywords | Routed Model |
-|-----------|----------|-------------|
-| Building | code, implement, debug, refactor, build... | `claude-opus-4-5-latest` |
-| Planning | plan, design, strategy, architecture... | `deepseek-chat` |
-| Reasoning | solve, explain, calculate, prove... | `gpt-4o` |
-| Fast | simple question, <100 chars | `gpt-4o-mini` |
-| Default | — | `deepseek-chat` |
-
-### Model Aliases
-
-Short aliases are resolved automatically:
-
-| Alias | Resolves To |
-|-------|------------|
-| `gpt4` | `gpt-4o` |
-| `claude` | `claude-opus-4-5-latest` |
-| `deepseek` | `deepseek-chat` |
-| `gemini` | `gemini-2.0-flash` |
-| `grok` | `grok-3` |
-| `llama` | `llama-3.1-70b` |
-| `qwen-coder` | `qwen-2.5-coder-32b-instruct` |
-
----
-
-## Streaming
-
-All endpoints support real-time SSE streaming:
-
-**cURL:**
-```bash
-curl -X POST http://localhost:3333/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-4o",
-    "stream": true,
-    "messages": [{"role": "user", "content": "Tell me a story"}]
-  }'
-```
-
-**Python (OpenAI SDK):**
-```python
-stream = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Tell me a story"}],
-    stream=True
-)
-
-for chunk in stream:
-    if chunk.choices[0].delta.content:
-        print(chunk.choices[0].delta.content, end="", flush=True)
-```
-
-**JavaScript (EventSource):**
-```javascript
-const response = await fetch('http://localhost:3333/v1/chat/completions', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    model: 'gpt-4o',
-    stream: true,
-    messages: [{ role: 'user', content: 'Tell me a story' }]
-  })
-});
-
-const reader = response.body.getReader();
-const decoder = new TextDecoder();
-
-while (true) {
-  const { done, value } = await reader.read();
-  if (done) break;
-  const chunk = decoder.decode(value);
-  // Parse SSE data lines
-  for (const line of chunk.split('\n')) {
-    if (line.startsWith('data: ') && line !== 'data: [DONE]') {
-      const data = JSON.parse(line.slice(6));
-      const content = data.choices?.[0]?.delta?.content || '';
-      if (content) process.stdout.write(content);
-    }
-  }
-}
-```
-
----
-
-## API Endpoints
-
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/v1/chat/completions` | POST | OpenAI-compatible chat completions |
-| `/v1/messages` | POST | Anthropic-compatible messages |
-| `/chat` | POST | Native auto-routed chat |
-| `/models` | GET | List all available models |
-| `/providers` | GET | Provider details and stats |
-| `/providers/:name/health` | GET | Per-provider health check |
-| `/health` | GET | Gateway health check |
-| `/status` | GET | Full server + provider status |
-| `/dashboard` | GET | PWA dashboard (web UI) |
-
----
-
-## Configuration
-
-All configuration is done via environment variables (`.env` file):
-
-### Server
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `3333` | Server port |
-| `NODE_ENV` | `development` | Environment (production hides error details) |
-| `LOG_LEVEL` | `info` | Logging verbosity |
-| `CORS_ORIGIN` | `*` | Allowed CORS origin(s) |
-| `API_KEY` | — | Optional API key for auth |
-
-### Provider API Keys
-
-| Variable | Provider | Get Key |
-|----------|----------|---------|
-| `PUTER_AUTH_TOKEN` | Puter.js | [puter.com](https://puter.com/#/account) (optional) |
-| `GROQ_API_KEY` | Groq | [console.groq.com](https://console.groq.com) |
-| `HUGGINGFACE_API_KEY` | HuggingFace | [huggingface.co](https://huggingface.co/settings/tokens) |
-| `OPENROUTER_API_KEY` | OpenRouter | [openrouter.ai](https://openrouter.ai/keys) |
-
-### Disable Providers
-
-Set to `true` or `1` to disable:
-
-| Variable | Default |
-|----------|---------|
-| `DISABLE_PUTER` | `false` |
-| `DISABLE_POLLINATIONS` | `false` |
-| `DISABLE_DUCKDUCKGO` | `false` |
-| `DISABLE_OPENROUTER` | `false` |
-| `DISABLE_GROQ` | `false` |
-| `DISABLE_HUGGINGFACE` | `false` |
-| `DISABLE_G4F` | `false` |
-| `DISABLE_BLACKBOX` | `false` |
-| `DISABLE_PHIND` | `false` |
-
-### Rate Limiting & Health
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `RATELIMIT_WINDOW_MS` | `60000` | Rate limit window (ms) |
-| `RATELIMIT_MAX_REQUESTS` | `100` | Max requests per window |
-| `HEALTH_CHECK_INTERVAL_MS` | `60000` | Provider health check interval |
-| `MODEL_SYNC_INTERVAL_MS` | `3600000` | Model list sync interval (1 hour) |
-
----
-
-## Dashboard
-
-ProxyGateLLM includes a professional **PWA dashboard** accessible at `http://localhost:3333/dashboard`:
-
-- **Overview** — Real-time stats, provider health, uptime
-- **Providers** — Detailed per-provider metrics, latency, error rates
-- **Models** — Searchable model grid with type badges and provider info
-- **Playground** — Chat playground with model selector, format toggle, and streaming
-- **API Reference** — Quick copy-paste code snippets for integration
-
-The dashboard is a **Progressive Web App** — install it on your device for a native-like experience. Features a polished dark theme inspired by Vercel/Linear design systems, fully responsive for mobile.
-
----
-
-## AI Agent
-
-ProxyGateLLM includes a standalone AI agent that works without a backend:
-
-```javascript
-import { ProxyGateLLMAgent } from './agent/index.js';
-
-const agent = new ProxyGateLLMAgent({
-  baseUrl: 'http://localhost:3333',
-  model: 'auto',
-  format: 'openai'
-});
-
-// Simple chat
-const response = await agent.chat('Explain quantum computing');
-
-// Streaming chat
-const streamResponse = await agent.chat('Tell me a story', {
-  stream: true,
-  onChunk: (chunk, full) => process.stdout.write(chunk)
-});
-
-// Multi-step reasoning
-const result = await agent.reason('Design a microservices architecture', 3);
-console.log(result.answer);
-
-// Code generation with review
-const code = await agent.generateCode('REST API with Express.js', 'javascript');
-console.log(code.code);    // Generated code
-console.log(code.review);  // Code review
-```
-
-**CLI Mode:**
-```bash
-node agent/index.js
-```
-
-Interactive REPL with commands: `quit`, `clear`, `models`.
-
----
-
-## Project Structure
-
-```
-ProxyGateLLM/
-├── index.js                  # Express server & API endpoints
-├── router.js                 # Smart model routing & alias resolution
-├── middleware.js              # Rate limiting, validation, auth
-├── config/
-│   └── providers.js          # Provider config, model mappings, aliases
-├── providers/
-│   ├── base.js               # BaseProvider abstract class
-│   ├── index.js              # Provider Registry (auto-discovery)
-│   ├── puter.js              # Puter.js SDK provider
-│   ├── pollinations.js       # Pollinations AI provider
-│   ├── duckduckgo.js         # DuckDuckGo AI Chat provider
-│   ├── openrouter.js         # OpenRouter provider
-│   ├── groq.js               # Groq provider
-│   ├── huggingface.js        # HuggingFace Inference provider
-│   ├── g4f.js                # G4F/FreeGPT provider
-│   ├── blackbox.js           # Blackbox AI provider
-│   └── phind.js              # Phind provider
-├── utils/
-│   ├── provider-manager.js   # Round-robin routing & failover
-│   └── model-sync.js         # Auto model list sync service
-├── agent/
-│   └── index.js              # ProxyGateLLMAgent class + CLI
-├── dashboard/
-│   ├── index.html            # PWA dashboard (dark theme)
-│   └── manifest.json         # PWA manifest
-├── src/
-│   ├── middleware.test.js    # Middleware tests
-│   └── router.test.js       # Router tests
-├── .env.example              # Environment template
-├── package.json              # Project manifest
-├── LICENSE                   # MIT License
-└── README.md                 # This file
+# List models
+npm run models
 ```
 
 ---
 
 ## Contributing
 
-We welcome contributions! Here's how you can help:
-
-1. **Fork** the repository
-2. **Create** a feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** your changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to the branch (`git push origin feature/amazing-feature`)
-5. **Open** a Pull Request
-
-### Development
-
-```bash
-# Install dependencies
-npm install
-
-# Run in development mode (auto-reload)
-npm run dev
-
-# Run tests
-npm test
-
-# Syntax check
-npm run lint
-```
-
-### Adding a New Provider
-
-1. Create a new file in `providers/` extending `BaseProvider`
-2. Implement `chat()`, `chatStream()`, and `checkHealth()` methods
-3. Register it in `providers/index.js`
-4. Add config in `config/providers.js`
-5. Add `DISABLE_<NAME>` env var support
-
-Please see [CONTRIBUTING.md](CONTRIBUTING.md) for full guidelines.
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feat/amazing`)
+3. Commit your changes (`git commit -m 'feat: amazing feature'`)
+4. Push to the branch (`git push origin feat/amazing`)
+5. Open a Pull Request
 
 ---
 
 ## License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-## Author
+## Support
 
-**Mulky Malikul Dhaher**
-[![GitHub](https://img.shields.io/badge/GitHub-mulkymalikuldhrs-181717?style=flat-square&logo=github)](https://github.com/mulkymalikuldhrs)
-
----
-
-## Disclaimer
-
-> **⚠️ This project is for Education Purpose only.**
->
-> The authors and contributors assume no responsibility or liability for any damages, losses, or risks arising from the use of this software. Any use for commercial, illegal, or unethical purposes is strictly prohibited.
+- **GitHub Issues**: [github.com/mulkymalikuldhrs/ProxyGateLLM/issues](https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues)
+- **Documentation**: [API.md](API.md) | [ARCHITECTURE.md](ARCHITECTURE.md) | [TUTORIAL.md](TUTORIAL.md)
 
 ---
 
-<div align="center">
-
-**ProxyGateLLM** — Free AI Access for Everyone 🚀
-
-[⬆ Back to Top](#proxygatelymm--the-biggest-free-multi-llm-hub)
-
-</div>
+<p align="center">
+  Made with ❤️ by <a href="https://github.com/mulkymalikuldhrs">Mulky Malikul Dhaher</a>
+</p>

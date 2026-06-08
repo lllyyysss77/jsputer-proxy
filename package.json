@@ -1,6 +1,6 @@
 {
   "name": "proxygatelymm",
-  "version": "4.0.0",
+  "version": "5.0.0",
   "description": "ProxyGateLLM (formerly jsputer-proxy) — The Biggest Free Multi-LLM Hub. OpenAI/Anthropic-compatible API with 13+ providers, round-robin failover, streaming, MCP server, auto-routing, PWA dashboard, and AI agent. No API keys required for core providers.",
   "main": "index.js",
   "type": "module",

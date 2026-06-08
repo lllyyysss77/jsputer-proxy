@@ -4,6 +4,24 @@
 import { BaseProvider } from './base.js';
 import { PROVIDER_CONFIG } from '../config/providers.js';
 
+const ALIAS_MAP = {
+  'gpt-4o': 'openai/gpt-4o',
+  'gpt-4o-mini': 'openai/gpt-4o-mini',
+  'gpt-4o-mini-2024-07-18': 'openai/gpt-4o-mini-2024-07-18',
+  'claude-3-haiku': 'anthropic/claude-3-haiku',
+  'claude-3-sonnet': 'anthropic/claude-3-sonnet',
+  'claude-3-opus': 'anthropic/claude-3-opus',
+  'gemini-2.0-flash': 'google/gemini-2.0-flash-001',
+  'gemini-pro': 'google/gemini-pro',
+  'llama-3.1-70b': 'meta-llama/llama-3.1-70b-instruct:free',
+  'llama-3.1-8b': 'meta-llama/llama-3.1-8b-instruct:free',
+  'mistral-large': 'mistralai/mistral-large-2407',
+  'deepseek-chat': 'deepseek/deepseek-chat',
+  'deepseek-r1': 'deepseek/deepseek-r1',
+  'qwen-2.5-coder': 'qwen/qwen-2.5-coder-32b-instruct',
+  'codestral': 'mistralai/codestral-2405',
+};
+
 export class OpenRouterProvider extends BaseProvider {
   constructor(config = {}) {
     const cfg = { ...PROVIDER_CONFIG.openrouter, ...config };
@@ -110,13 +128,21 @@ export class OpenRouterProvider extends BaseProvider {
 
       const freeModels = data.data
         .filter(m => m.pricing?.prompt === '0' || m.pricing?.prompt?.startsWith('0.0'))
-        .map(m => ({
-          id: m.id,
-          type: m.architecture?.modality === 'chat' ? 'general' : 'other',
-          description: `${m.name || m.id} (free) — ${(m.context_length || 0).toLocaleString()} ctx`,
-          maxTokens: m.context_length || 4096,
-          contextLength: m.context_length
-        }));
+        .map(m => {
+          // Add common aliases for better routing
+          const aliases = [];
+          for (const [alias, orId] of Object.entries(ALIAS_MAP)) {
+            if (m.id === orId) aliases.push(alias);
+          }
+          return {
+            id: m.id,
+            type: m.architecture?.modality === 'chat' ? 'general' : 'other',
+            description: `${m.name || m.id} (free) — ${(m.context_length || 0).toLocaleString()} ctx`,
+            maxTokens: m.context_length || 4096,
+            contextLength: m.context_length,
+            aliases: aliases.length > 0 ? aliases : undefined
+          };
+        });
 
       console.log(`[OPENROUTER] Found ${freeModels.length} free models`);
       return freeModels.length > 0 ? freeModels : this.models;

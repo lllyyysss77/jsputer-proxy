@@ -184,7 +184,7 @@ export const MODEL_ALIASES = {
   'gemini': 'gemini-2.0-flash',
   'gemini-flash': 'gemini-2.0-flash',
   'grok': 'grok-3',
-  'llama': 'llama-3.1-70b',
+  'llama': 'llama-3.3-70b-versatile',
   'mixtral': 'mixtral-8x7b-32768',
   'qwen-coder': 'qwen-2.5-coder-32b-instruct',
   'codestral': 'codestral-2508',
