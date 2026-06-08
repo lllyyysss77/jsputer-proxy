@@ -13,7 +13,16 @@
  * Zero backend. Pure middleware. 10+ year relevance.
  */
 
-// Re-export all engines
+// Import components for internal use
+import { MultiModalClient } from './multimodal.js';
+import { AgentGraph, Handlers } from './orchestration.js';
+import { MCPGateway } from './mcp-gateway.js';
+import { A2AServer } from './a2a-protocol.js';
+import { ToolRegistry, BuiltinTools } from './tools.js';
+import { Tracer } from './observability.js';
+import { AgentMarketplace } from './marketplace.js';
+
+// Re-export all engines for external use
 export { ContentTypes, ContentBlock, MultiModalMessage, MultiModalClient } from './multimodal.js';
 export { NodeTypes, Node, Edge, State, AgentGraph, Handlers } from './orchestration.js';
 export { MCPRegistry, MCPGateway } from './mcp-gateway.js';
