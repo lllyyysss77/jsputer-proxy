@@ -5,6 +5,43 @@ All notable changes to ProxyGateLLM will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [6.0.0] - 2026-06-10
+
+### Added — MAJOR UPGRADE (OmniRoute-Inspired)
+- **Circuit Breaker** — 4-state model (CLOSED → DEGRADED → OPEN → HALF_OPEN) with failure-kind-aware thresholds, adaptive backoff, and per-provider state tracking. Inspired by OmniRoute's 3-layer resilience system.
+- **Cost Estimation** — Pre-flight cost estimation for 30+ models with pricing data, free provider detection, CJK-aware token estimation, and formatted cost display.
+- **5 New Free Providers** (no API key, no signup):
+  - **LLM7.io** — OpenAI-compatible API, 30+ models, streaming, zero friction
+  - **DeepAI** — Free chat mode, no login required
+  - **FreeGPT** — Free GPT-4/GPT-4o access
+  - **Api.airforce** — 55+ free models, OpenAI-compatible
+  - **Venice.ai** — Privacy-focused AI, Llama/DeepSeek/Qwen/Gemma
+- **Provider Categories** — FREE_NOAUTH, FREE_KEY, BYOAPI, WEB_COOKIE classification system
+- **New API Endpoints**:
+  - `GET /providers/free` — List free providers only
+  - `GET /circuit-breakers` — Circuit breaker status for all providers
+  - `POST /v1/cost-estimate` — Pre-flight cost estimation
+- **Enhanced Provider Manager** — Circuit breaker integration, error classification (rate_limit, quota_exhausted, auth_failure, timeout, server_error, network_error), cost-aware routing
+- **Routing Strategies Configuration** — Priority, round-robin, least-latency, random, cost-optimized
+- **Attribution** — OmniRoute-inspired circuit breaker and provider categorization patterns
+
+### Changed
+- **Version bump** — 5.1.0 → 6.0.0
+- **Provider count** — 17 → 22 providers
+- **Free providers** — Now 10 truly free (no API key) providers
+- **Model count** — 430+ → 473+ models (with free model sync)
+- **Dashboard** — Updated to v6.0 branding
+- **Provider Manager** — Now uses circuit breaker for failover decisions
+- **Request flow** — Added cost estimation metadata to all responses
+
+### Fixed
+- **6 missing providers** in config — Together, SambaNova, Scaleway, Inference.net now properly configured
+- **Version mismatch** — All version references now consistent at 6.0.0
+- **Streaming timeout** — Circuit breaker prevents indefinite hangs on failed providers
+- **Error classification** — Errors properly categorized for intelligent retry decisions
+
+---
+
 ## [5.1.0] - 2026-06-09
 
 ### Added

@@ -6,7 +6,7 @@
 [![Providers](https://img.shields.io/badge/Providers-9-8B5CF6?style=for-the-badge)]()
 [![Free](https://img.shields.io/badge/Cost-FREE-success?style=for-the-badge)]()
 
-**Complete model catalog, routing logic, and usage guide for ProxyGateLLM v4.0.0**
+**Complete model catalog, routing logic, and usage guide for ProxyGateLLM v6.0.0**
 
 </div>
 

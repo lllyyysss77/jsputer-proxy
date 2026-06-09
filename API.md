@@ -1,6 +1,6 @@
 # ProxyGateLLM API Reference
 
-Complete API reference for ProxyGateLLM v5.0.0 — The Biggest Free Multi-LLM Hub.
+Complete API reference for ProxyGateLLM v6.0.0 — The Biggest Free Multi-LLM Hub.
 
 ---
 
@@ -173,7 +173,7 @@ Health check endpoint.
   "status": "ok",
   "uptime": 3600.5,
   "timestamp": "2026-06-08T00:00:00.000Z",
-  "version": "5.0.0"
+  "version: 6.0.0"
 }
 ```
 
@@ -186,7 +186,7 @@ Server and provider status.
 ```json
 {
   "status": "ok",
-  "version": "5.0.0",
+  "version: 6.0.0",
   "uptime": 3600,
   "providers": {
     "enabled": 8,

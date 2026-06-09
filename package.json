@@ -1,17 +1,17 @@
 {
   "name": "proxygatelymm",
-  "version": "5.1.0",
-  "description": "ProxyGateLLM (formerly jsputer-proxy) \u2014 The Biggest Free Multi-LLM Hub. OpenAI/Anthropic-compatible API with 13+ providers, round-robin failover, streaming, MCP server, auto-routing, PWA dashboard, and AI agent. No API keys required for core providers.",
+  "version": "6.0.0",
+  "description": "ProxyGateLLM v6 — The Biggest Free Multi-LLM Hub. 22 providers (10 free no-auth), OpenAI/Anthropic-compatible API, circuit breaker, cost estimation, smart routing, streaming, MCP server, auto-routing, PWA dashboard, AI agent. Inspired by OmniRoute. No API keys required for 10+ providers.",
   "main": "engine/index.js",
   "type": "module",
   "scripts": {
     "start": "node index.js",
     "dev": "node --watch index.js",
-    "build": "echo 'No build step required \u2014 this is a pure Node.js project'",
+    "build": "echo 'No build step required — this is a pure Node.js project'",
     "test": "node --test src/**/*.test.js",
     "lint": "node --check index.js router.js middleware.js && echo 'Syntax OK'",
     "clean": "rm -rf node_modules/.cache",
-    "health": "curl -s http://localhost:3333/health | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.status===\"ok\"?\"\u2713 Healthy\":\"\u2717 Unhealthy\",j)}catch(e){console.log(\"\u2717 Parse error\",d)}})'",
+    "health": "curl -s http://localhost:3333/health | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.status===\"ok\"?\"✓ Healthy\":\"✗ Unhealthy\",j)}catch(e){console.log(\"✗ Parse error\",d)}})'",
     "models": "curl -s http://localhost:3333/models | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.data.length,\"models available\");j.data.forEach(m=>console.log(\" -\",m.id,\"(\"+m.providers?.join(\", \")+\")\"))}catch(e){console.log(d)}})'",
     "providers": "curl -s http://localhost:3333/providers | node -e 'process.stdin.resume();let d=\"\";process.stdin.on(\"data\",c=>d+=c);process.stdin.on(\"end\",()=>{try{const j=JSON.parse(d);console.log(j.enabled,\"/\",j.total,\"providers enabled\");j.providers.forEach(p=>console.log(\" -\",p.displayName,\"[\"+p.healthStatus+\"]\",p.modelCount,\"models\"))}catch(e){console.log(d)}})'"
   },
@@ -37,6 +37,13 @@
     "google-ai",
     "blackbox",
     "phind",
+    "llm7",
+    "deepai",
+    "venice",
+    "freegpt",
+    "apiairforce",
+    "circuit-breaker",
+    "cost-estimation",
     "streaming",
     "auto-routing",
     "round-robin",
@@ -56,7 +63,8 @@
     "saas",
     "isaas",
     "api-gateway",
-    "llm-proxy"
+    "llm-proxy",
+    "omniroute-inspired"
   ],
   "author": {
     "name": "Mulky Malikul Dhaher",
@@ -94,6 +102,8 @@
     "./a2a": "./engine/a2a-protocol.js",
     "./tools": "./engine/tools.js",
     "./observability": "./engine/observability.js",
-    "./marketplace": "./engine/marketplace.js"
+    "./marketplace": "./engine/marketplace.js",
+    "./circuit-breaker": "./utils/circuit-breaker.js",
+    "./cost-estimator": "./utils/cost-estimator.js"
   }
 }

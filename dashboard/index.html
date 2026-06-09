@@ -619,7 +619,7 @@
           <div class="logo-mark">P</div>
           <div class="logo-text">
             <h1>ProxyGateLLM</h1>
-            <span>AI Gateway v5.0</span>
+            <span>AI Gateway v6.0</span>
           </div>
         </div>
       </div>
@@ -724,7 +724,7 @@
             </div>
             <div class="stat-card">
               <div class="stat-label">Gateway Version</div>
-              <div class="stat-value" id="stat-version">5.0</div>
+              <div class="stat-value" id="stat-version">6.0</div>
               <div class="stat-sub">The Biggest Free Multi-LLM Hub</div>
             </div>
           </div>
@@ -1155,7 +1155,7 @@ curl -X POST <span class="str">${BASE}/mcp</span> \
               <div class="settings-group-title">About</div>
               <div class="settings-row">
                 <div><div class="settings-label">Version</div></div>
-                <div class="text-secondary" id="settings-version">5.0</div>
+                <div class="text-secondary" id="settings-version">6.0</div>
               </div>
               <div class="settings-row">
                 <div><div class="settings-label">License</div></div>
@@ -1555,7 +1555,7 @@ const response = await client.chat.completions.create({
         document.getElementById('stat-providers-sub').textContent = `${total} total \u00B7 ${enabled} enabled`;
         document.getElementById('stat-uptime').textContent = formatUptime(data.uptime);
         document.getElementById('stat-env').textContent = (data.env || 'development') + ' environment';
-        const ver = (data.version || '5.0').replace(/^v/, '');
+        const ver = (data.version || '6.0').replace(/^v/, '');
         document.getElementById('stat-version').textContent = ver;
         document.getElementById('settings-version').textContent = ver;
 

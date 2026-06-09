@@ -1,6 +1,6 @@
 # Product Requirements Document
 
-## ProxyGateLLM v4.0.0 — The Biggest Free Multi-LLM Hub
+## ProxyGateLLM v6.0.0 — The Biggest Free Multi-LLM Hub
 
 **Author:** Mulky Malikul Dhaher  
 **Version:** 4.0.0  
@@ -655,7 +655,7 @@ The complete API specification is documented in [API.md](API.md). Below is a sum
 
 ## 8. Future Roadmap
 
-### Phase 2: Enhanced Gateway (v5.0)
+### Phase 2: Enhanced Gateway (v6.0)
 
 | Feature | Description | Priority |
 |---------|-------------|----------|

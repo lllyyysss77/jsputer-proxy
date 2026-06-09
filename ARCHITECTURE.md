@@ -5,7 +5,7 @@
 [![Architecture](https://img.shields.io/badge/Architecture-5_Layer-0EA5E9?style=for-the-badge)]()
 [![Version](https://img.shields.io/badge/Version-4.0.0-blue?style=for-the-badge)](https://github.com/mulkymalikuldhrs/ProxyGateLLM)
 
-**Comprehensive architecture documentation for ProxyGateLLM v4.0.0**
+**Comprehensive architecture documentation for ProxyGateLLM v6.0.0**
 
 </div>
 
@@ -52,7 +52,7 @@ ProxyGateLLM is a multi-provider LLM proxy that aggregates 9 free AI providers i
                                         │  HTTP
                                         ▼
 ┌───────────────────────────────────────────────────────────────────────┐
-│                       ProxyGateLLM v4.0.0                      │
+│                       ProxyGateLLM v6.0.0                      │
 │                                                                       │
 │  ┌─────────────────────────────────────────────────────────────────┐ │
 │  │ Layer 1: API Gateway (Express 5.x)                             │ │

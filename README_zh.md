@@ -1,4 +1,4 @@
-# ProxyGateLLM v5.0.0
+# ProxyGateLLM v6.0.0
 
 <p align="center">
   <strong>最大的免费多LLM中心</strong><br>

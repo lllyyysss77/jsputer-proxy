@@ -1,6 +1,8 @@
 // index.js
-// ProxyGateLLM v4.0.0 — The Biggest Free Multi-LLM Hub
-// OpenAI/Anthropic-compatible API with multi-provider failover, streaming, and auto-routing
+// ProxyGateLLM v6.0.0 — The Biggest Free Multi-LLM Hub
+// OpenAI/Anthropic-compatible API with 22 providers, circuit breaker, cost estimation,
+// smart routing, streaming, MCP server, auto-routing, PWA dashboard, and AI agent
+// Inspired by OmniRoute — production-grade LLM gateway
 
 import { config } from 'dotenv';
 import { fileURLToPath } from 'url';
@@ -12,6 +14,8 @@ import { MCPServer } from './utils/mcp-server.js';
 import { ModelSyncService } from './utils/model-sync.js';
 import { resolveModel, pickModel, getTaskType } from './router.js';
 import { rateLimiter, validateChatRequest, validateMessagesRequest, sanitizeMessages, API_KEY_AUTH } from './middleware.js';
+import { estimateCost, estimateInputTokens, formatCost } from './utils/cost-estimator.js';
+import { FREE_PROVIDERS } from './config/providers.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -20,7 +24,7 @@ config({ path: join(__dirname, '.env') });
 
 const PORT = parseInt(process.env.PORT || '3333', 10);
 const CORS_ORIGIN = process.env.CORS_ORIGIN || '';
-const VERSION = '5.0.0';
+const VERSION = '6.0.0';
 
 // ── Initialize Multi-Provider System ──────────────────────────────────────
 
@@ -34,7 +38,10 @@ async function initProviders() {
     await registry.init();
     await manager.start();
     await syncService.start();
-    console.log(`[ProxyGateLLM] Multi-provider system initialized: ${registry.getEnabledProviders().length} providers active`);
+    const enabledCount = registry.getEnabledProviders().length;
+    const freeCount = registry.getFreeProviders().length;
+    const modelCount = registry.getAllModels().length;
+    console.log(`[ProxyGateLLM] Multi-provider system initialized: ${enabledCount} providers active (${freeCount} free), ${modelCount} models available`);
   } catch (err) {
     console.error(`[ProxyGateLLM] Provider init error: ${err.message}`);
   }
@@ -64,7 +71,7 @@ app.use((req, res, next) => {
 
 // ── Request Logging ───────────────────────────────────────────────────────
 const requestLog = [];
-const MAX_LOG_SIZE = 1000;
+const MAX_LOG_SIZE = 2000;
 
 function logRequest(req, res, next) {
   const start = Date.now();
@@ -224,10 +231,16 @@ app.post('/v1/chat/completions', validateChatRequest, async (req, res) => {
     }
 
     // Non-streaming response
-    const { result, provider: usedProvider, latency } = await manager.chatWithFailover(model, sanitizedMessages);
+    const { result, provider: usedProvider, latency, costEstimate } = await manager.chatWithFailover(model, sanitizedMessages);
 
     // If result is already in OpenAI format (from OpenRouter/Groq), pass through
     if (result?.object === 'chat.completion' && result?.choices) {
+      // Add cost metadata
+      result._meta = { 
+        provider: usedProvider, 
+        latency_ms: latency,
+        estimated_cost: costEstimate ? formatCost(costEstimate) : undefined
+      };
       res.json(result);
       return;
     }
@@ -246,7 +259,12 @@ app.post('/v1/chat/completions', validateChatRequest, async (req, res) => {
         finish_reason: 'stop'
       }],
       usage: result?.usage || {},
-      _meta: { provider: usedProvider, latency_ms: latency }
+      _meta: { 
+        provider: usedProvider, 
+        latency_ms: latency,
+        estimated_cost: costEstimate ? formatCost(costEstimate) : undefined,
+        is_free: costEstimate?.isFree || false
+      }
     });
 
   } catch (error) {
@@ -343,7 +361,7 @@ app.post('/v1/messages', validateMessagesRequest, async (req, res) => {
     }
 
     // Non-streaming
-    const { result, provider: usedProvider, latency } = await manager.chatWithFailover(model, sanitizedMessages, { format: 'anthropic' });
+    const { result, provider: usedProvider, latency, costEstimate } = await manager.chatWithFailover(model, sanitizedMessages, { format: 'anthropic' });
 
     if (result?.type === 'message' && result?.content) {
       res.json(result);
@@ -360,7 +378,7 @@ app.post('/v1/messages', validateMessagesRequest, async (req, res) => {
       model,
       stop_reason: 'end_turn',
       usage: result?.usage || { input_tokens: 0, output_tokens: 0 },
-      _meta: { provider: usedProvider, latency_ms: latency }
+      _meta: { provider: usedProvider, latency_ms: latency, estimated_cost: costEstimate ? formatCost(costEstimate) : undefined }
     });
 
   } catch (error) {
@@ -384,10 +402,58 @@ app.post('/chat', validateChatRequest, async (req, res) => {
 
       try {
         const { stream: providerStream } = await manager.chatStreamWithFailover(model, sanitizedMessages);
+        
         if (providerStream && typeof providerStream[Symbol.asyncIterator] === 'function') {
           for await (const chunk of providerStream) {
             if (res.writableEnded) break;
             sendSSE(res, chunk);
+          }
+        } else if (providerStream && typeof providerStream.getReader === 'function') {
+          const reader = providerStream.getReader();
+          const decoder = new TextDecoder();
+          let buffer = '';
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            if (res.writableEnded) break;
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\n');
+            buffer = lines.pop() || '';
+            for (const line of lines) {
+              const trimmed = line.trim();
+              if (!trimmed || trimmed.startsWith(':')) continue;
+              if (trimmed.startsWith('data: ')) {
+                const data = trimmed.slice(6);
+                if (data === '[DONE]') continue;
+                try {
+                  const parsed = JSON.parse(data);
+                  if (parsed.object === 'chat.completion.chunk') {
+                    sendSSE(res, parsed);
+                  } else {
+                    const content = parsed.choices?.[0]?.delta?.content || '';
+                    if (content) {
+                      sendSSE(res, {
+                        id: 'chatcmpl-' + Date.now(),
+                        object: 'chat.completion.chunk',
+                        created: Math.floor(Date.now() / 1000),
+                        model,
+                        choices: [{ index: 0, delta: { content }, finish_reason: null }]
+                      });
+                    }
+                  }
+                } catch {
+                  if (data) {
+                    sendSSE(res, {
+                      id: 'chatcmpl-' + Date.now(),
+                      object: 'chat.completion.chunk',
+                      created: Math.floor(Date.now() / 1000),
+                      model,
+                      choices: [{ index: 0, delta: { content: data }, finish_reason: null }]
+                    });
+                  }
+                }
+              }
+            }
           }
         }
         sendSSEDone(res);
@@ -398,8 +464,8 @@ app.post('/chat', validateChatRequest, async (req, res) => {
       return;
     }
 
-    const { result, provider: usedProvider, latency } = await manager.chatWithFailover(model, sanitizedMessages);
-    res.json({ ...result, _meta: { provider: usedProvider, model, latency_ms: latency } });
+    const { result, provider: usedProvider, latency, costEstimate } = await manager.chatWithFailover(model, sanitizedMessages);
+    res.json({ ...result, _meta: { provider: usedProvider, model, latency_ms: latency, estimated_cost: costEstimate ? formatCost(costEstimate) : undefined } });
 
   } catch (error) {
     console.error('[ERROR] /chat:', error.message);
@@ -430,7 +496,8 @@ app.get('/status', (req, res) => {
     modelSync: syncService.getStats(),
     rate_limiting: true,
     cors_enabled: true,
-    api_key_auth: !!process.env.API_KEY
+    api_key_auth: !!process.env.API_KEY,
+    circuit_breakers: manager.circuitBreakers.getStats()
   });
 });
 
@@ -455,15 +522,56 @@ app.get('/providers', (req, res) => {
   res.json(registry.getStats());
 });
 
+app.get('/providers/free', (req, res) => {
+  const freeProviders = registry.getFreeProviders();
+  res.json({
+    total: freeProviders.length,
+    providers: freeProviders.map(p => p.getStats())
+  });
+});
+
 app.get('/providers/:name/health', async (req, res) => {
   const provider = registry.getProvider(req.params.name);
   if (!provider) return res.status(404).json({ error: 'Provider not found' });
   try {
     await provider.checkHealth();
-    res.json({ name: provider.name, health: provider.healthStatus, lastCheck: provider.lastHealthCheck });
+    const breaker = manager.circuitBreakers.getOrCreate(provider.name);
+    res.json({ 
+      name: provider.name, 
+      health: provider.healthStatus, 
+      lastCheck: provider.lastHealthCheck,
+      circuitBreaker: breaker.getStats()
+    });
   } catch (err) {
     res.json({ name: provider.name, health: provider.healthStatus, error: err.message, lastCheck: provider.lastHealthCheck });
   }
+});
+
+// ── Cost Estimation Endpoint ──────────────────────────────────────────────
+
+app.post('/v1/cost-estimate', (req, res) => {
+  try {
+    const { messages, model: rawModel } = req.body;
+    if (!messages || !Array.isArray(messages)) {
+      return res.status(400).json({ error: 'messages array required' });
+    }
+    const model = resolveModel(rawModel) || pickModel(messages);
+    const inputTokens = estimateInputTokens(messages);
+    const costEstimate = estimateCost(model, inputTokens);
+    res.json({
+      model,
+      ...costEstimate,
+      formatted_cost: formatCost(costEstimate)
+    });
+  } catch (error) {
+    res.status(500).json(safeErrorResponse(error, 'cost_estimation_error'));
+  }
+});
+
+// ── Circuit Breaker Status Endpoint ───────────────────────────────────────
+
+app.get('/circuit-breakers', (req, res) => {
+  res.json(manager.circuitBreakers.getStats());
 });
 
 // ── MCP (Model Context Protocol) Endpoint ─────────────────────────────────
@@ -534,25 +642,31 @@ async function start() {
   await initProviders();
 
   app.listen(PORT, () => {
+    const enabledCount = registry.getEnabledProviders().length;
+    const freeCount = registry.getFreeProviders().length;
+    const modelCount = registry.getAllModels().length;
     console.log(`
-╔══════════════════════════════════════════════════════════════╗
-║  ProxyGateLLM v${VERSION} — The Biggest Free Multi-LLM Hub  ║
-╠══════════════════════════════════════════════════════════════╣
-║  Running on http://localhost:${PORT}                            ║
-╠══════════════════════════════════════════════════════════════╣
-║  POST /chat                 - Chat (auto-routing)            ║
-║  POST /v1/chat/completions  - OpenAI-compatible API          ║
-║  POST /v1/messages          - Anthropic-compatible API       ║
-║  GET  /health               - Health check                   ║
-║  GET  /status               - Server + provider status       ║
-║  GET  /models               - List all available models      ║
-║  GET  /providers            - Provider details & stats       ║
-║  POST /mcp                  - MCP (Model Context Protocol)   ║
-║  GET  /dashboard            - Web dashboard                  ║
-╠══════════════════════════════════════════════════════════════╣
-║  Providers: ${registry.getEnabledProviders().length} active                                       ║
-║  Models:    ${registry.getAllModels().length} available                                    ║
-╚══════════════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════════════════╗
+║  ProxyGateLLM v${VERSION} — The Biggest Free Multi-LLM Hub          ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Running on http://localhost:${PORT}                                    ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  POST /chat                 - Chat (auto-routing)                    ║
+║  POST /v1/chat/completions  - OpenAI-compatible API                  ║
+║  POST /v1/messages          - Anthropic-compatible API               ║
+║  POST /v1/cost-estimate     - Pre-flight cost estimation             ║
+║  GET  /health               - Health check                           ║
+║  GET  /status               - Server + provider status               ║
+║  GET  /models               - List all available models              ║
+║  GET  /providers            - Provider details & stats               ║
+║  GET  /providers/free       - Free providers only                    ║
+║  GET  /circuit-breakers     - Circuit breaker status                 ║
+║  POST /mcp                  - MCP (Model Context Protocol)           ║
+║  GET  /dashboard            - Web dashboard                          ║
+╠══════════════════════════════════════════════════════════════════════╣
+║  Providers: ${enabledCount} active (${freeCount} free)  |  Models: ${modelCount} available      ║
+║  Circuit Breaker: ON  |  Cost Estimation: ON  |  Streaming: ON     ║
+╚══════════════════════════════════════════════════════════════════════╝
 `);
   });
 }
