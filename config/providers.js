@@ -188,7 +188,17 @@ export const MODEL_ALIASES = {
   'mixtral': 'mixtral-8x7b-32768',
   'qwen-coder': 'qwen-2.5-coder-32b-instruct',
   'codestral': 'codestral-2508',
-  'mistral': 'mistral-large-2512'
+  'mistral': 'mistral-large-2512',
+  'qwen': 'Qwen/Qwen3-32B',
+  'qwen3': 'Qwen/Qwen3-32B',
+  'deepseek-v3': 'deepseek-v3',
+  'deepseek-r1': 'deepseek-r1',
+  'nemotron': 'nvidia/Nemotron-3-Super-120B-A12B',
+  'gemma4': 'google/gemma-4-26b-it',
+  'cogito': 'nvidia/Llama-3.3-Cogito-v1-70B',
+  'together-llama': 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+  'samba-deepseek': 'DeepSeek-V3.1-671B',
+  'samba-minimax': 'MiniMax-M2.7'
 };
 
 export default PROVIDER_CONFIG;

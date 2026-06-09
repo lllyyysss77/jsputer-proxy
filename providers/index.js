@@ -14,6 +14,10 @@ import { GoogleAIProvider } from './google-ai.js';
 import { CerebrasProvider } from './cerebras.js';
 import { CloudflareProvider } from './cloudflare.js';
 import { CohereProvider } from './cohere.js';
+import { TogetherProvider } from './together.js';
+import { SambaNovaProvider } from './sambanova.js';
+import { ScalewayProvider } from './scaleway.js';
+import { InferenceProvider } from './inference.js';
 
 const providerClasses = [
   PuterProvider,
@@ -28,7 +32,11 @@ const providerClasses = [
   GoogleAIProvider,
   CerebrasProvider,
   CloudflareProvider,
-  CohereProvider
+  CohereProvider,
+  TogetherProvider,
+  SambaNovaProvider,
+  ScalewayProvider,
+  InferenceProvider
 ];
 
 class ProviderRegistry {

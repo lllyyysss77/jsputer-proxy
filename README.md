@@ -1,4 +1,4 @@
-# ProxyGateLLM v5.0.0
+# ProxyGateLLM v5.1.0
 
 <p align="center">
   <strong>Puter.js untuk LLM — Gratis, Tanpa Backend, Frontend Only</strong><br>
@@ -39,8 +39,8 @@ User/Client → ProxyGateLLM → Provider A, B, C, D...
 ## Fitur
 
 ### Core
-- **378+ Model** — GPT-4o, Claude, Gemini, Llama, Mistral, dll
-- **13 Provider** — Puter.js, Groq, Pollinations, OpenRouter, dll
+- **430+ Model** — GPT-4o, Claude, Gemini, Llama 4, Mistral, DeepSeek, Qwen 3, dll
+- **17 Provider** — Puter.js, Groq, Together, SambaNova, OpenRouter, Pollinations, dll
 - **Auto-routing** — tugas code → Claude, planning → DeepSeek, fast → gpt-4o-mini
 - **Failover** — kalau provider down, auto-pindah ke backup
 - **Streaming** — support SSE real-time

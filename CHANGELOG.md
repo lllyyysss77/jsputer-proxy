@@ -5,6 +5,22 @@ All notable changes to ProxyGateLLM will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.0] - 2026-06-09
+
+### Added
+- **4 New Providers** — 13 → 17 total providers!
+  - **Together AI** — $25 free credits, 80+ free models, fastest ChatGPT alternative
+  - **SambaNova Cloud** — $5 free credits, DeepSeek-V3.1, Llama-4 Maverick, MiniMax M2.7
+  - **Scaleway Gen APIs** — EU-hosted, 1M free tokens, Mistral Medium 3.5, Gemma 4
+  - **Inference.net** — $10 free credits, DeepSeek R1, specialized models like Schematron
+- **Model aliases** — new shortcuts: `qwen`, `deepseek-v3`, `deepseek-r1`, `nemotron`, `gemma4`, `together-llama`, `samba-deepseek`, `samba-minimax`
+- **Auto-fetch models** — Together, SambaNova, and Inference.net support dynamic model listing
+
+### Changed
+- **Version bump** — 5.0.0 → 5.1.0
+- **Provider count** — Updated all docs from 13 to 17 providers
+- **Model count** — Now supporting 430+ models across all providers
+
 ## [5.0.0] - 2026-06-08
 
 ### Added
