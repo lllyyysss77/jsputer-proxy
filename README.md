@@ -1,685 +1,456 @@
+<a href="https://github.com/mulkymalikuldhrs/ProxyGateLLM">
+  <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:1a0a2e,50:2d1b69,100:44318d&height=220&section=header&text=ProxyGateLLM&fontSize=42&fontColor=a78bfa&animation=fadeIn&fontAlignY=30&desc=Multi-LLM%20API%20Gateway&descSize=16&descColor=34d399&descAlignY=50" />
+</a>
+
 <div align="center">
 
-# ProxyGateLLM v6.0.0
+[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&duration=3000&pause=1000&color=a78bfa&center=true&vCenter=true&width=700&lines=22+LLM+Providers+in+One+Gateway;10+Free+Providers+—+No+API+Key+Needed;Circuit+Breaker+%2B+Smart+Routing;OpenAI-Compatible+API+Endpoint)](https://git.io/typing-svg)
 
-### The Biggest Free Multi-LLM Hub
+<br/>
 
-**Free multi-LLM gateway with 22 providers (10 free, no API key), circuit breaker, cost estimation, OpenAI/Anthropic-compatible**
+[![Node.js](https://img.shields.io/badge/Node.js->=18-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Express](https://img.shields.io/badge/Express-4-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Puter.js](https://img.shields.io/badge/Puter.js-SDK-ff69b4?style=for-the-badge&logo=javascript&logoColor=white)](https://puter.com/)
+[![Anthropic](https://img.shields.io/badge/Anthropic-SDK-d4a574?style=for-the-badge&logo=anthropic&logoColor=white)](https://www.anthropic.com/)
+[![Version](https://img.shields.io/badge/Version-6.0.0-6366f1?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/releases)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](LICENSE)
 
-[![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/blob/main/LICENSE)
-[![Node >=18](https://img.shields.io/badge/node-%3E%3D18.0.0-green.svg)](https://nodejs.org/)
-[![Version 6.0.0](https://img.shields.io/badge/version-6.0.0-orange.svg)](https://github.com/mulkymalikuldhrs/ProxyGateLLM)
-[![Dependencies 4](https://img.shields.io/badge/dependencies-4-brightgreen.svg)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/blob/main/package.json)
-[![Providers 22](https://img.shields.io/badge/providers-22-purple.svg)](https://github.com/mulkymalikuldhrs/ProxyGateLLM)
-[![Free Providers 10](https://img.shields.io/badge/free_providers-10-success.svg)](https://github.com/mulkymalikuldhrs/ProxyGateLLM)
-[![Port 3333](https://img.shields.io/badge/port-3333-informational.svg)](https://github.com/mulkymalikuldhrs/ProxyGateLLM)
+<br/>
 
-*Inspired by [OmniRoute](https://github.com/mulkymalikuldhrs/OmniRoute)*
+[![GitHub Stars](https://img.shields.io/github/stars/mulkymalikuldhrs/ProxyGateLLM?style=for-the-badge&logo=github&color=gold)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/mulkymalikuldhrs/ProxyGateLLM?style=for-the-badge&logo=github&color=blue)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/fork)
+[![GitHub Issues](https://img.shields.io/github/issues/mulkymalikuldhrs/ProxyGateLLM?style=for-the-badge&logo=github&color=red)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues)
+[![GitHub License](https://img.shields.io/github/license/mulkymalikuldhrs/ProxyGateLLM?style=for-the-badge&logo=github&color=green)](LICENSE)
+
+<br/>
 
 </div>
 
 ---
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Why ProxyGateLLM?](#why-proxygatelym)
-- [Feature Comparison](#feature-comparison)
-- [22 Providers](#22-providers)
-  - [FREE — No API Key Required (10)](#free--no-api-key-required-10-providers)
-  - [FREE KEY — Signup Required (8)](#free-key--signup-required-8-providers)
-  - [BYOAPI — Requires API Key (4)](#byoapi--requires-api-key-4-providers)
-- [What's New in v6.0.0](#whats-new-in-v600)
-- [Architecture](#architecture)
-- [Circuit Breaker Deep Dive](#circuit-breaker-deep-dive)
-- [Cost Estimation](#cost-estimation)
-- [Smart Routing](#smart-routing)
-- [API Reference](#api-reference)
-- [Quick Start](#quick-start)
-- [Configuration](#configuration)
-- [Usage Examples](#usage-examples)
-- [Dashboard](#dashboard)
-- [Docker Support](#docker-support)
-- [Attributions](#attributions)
-- [License](#license)
-
----
-
 ## Overview
 
-ProxyGateLLM v6.0.0 is a self-hosted, open-source multi-LLM gateway that aggregates **22 AI providers** into a single, unified API. It is designed from the ground up to maximize free access to powerful language models — **10 providers work without any API key at all**, and an additional 8 require only a free signup. With only **4 runtime dependencies** (express, dotenv, @heyputer/puter.js, @anthropic-ai/sdk), ProxyGateLLM is lightweight, fast to install, and easy to deploy on any Node.js >=18 environment.
+ProxyGateLLM is a self-hosted, open-source multi-LLM gateway that aggregates **22 AI providers** into a single unified API. It is designed to maximize free access to language models — 10 providers work without any API key at all, and an additional 8 require only a free signup. With only 4 runtime dependencies, ProxyGateLLM is lightweight, fast to install, and easy to deploy.
 
-The gateway exposes both **OpenAI-compatible** (`/v1/chat/completions`) and **Anthropic-compatible** (`/v1/messages`) endpoints, meaning you can drop it into any existing application that uses the OpenAI or Anthropic SDK without changing a single line of code. Under the hood, a sophisticated **5-layer architecture** routes requests through health-aware provider selection, a 4-state circuit breaker per provider, cost estimation, and automatic failover — all while supporting real-time **SSE streaming** across every provider.
+The gateway provides an **OpenAI-compatible API endpoint**, making it a drop-in replacement for any application that uses the OpenAI SDK. It includes circuit breaker protection, smart routing with round-robin failover, cost estimation, and a built-in PWA dashboard for monitoring.
 
-Version 6.0.0 is a landmark release inspired by [OmniRoute](https://github.com/mulkymalikuldhrs/OmniRoute), bringing production-grade reliability features previously found only in enterprise LLM gateways: adaptive circuit breakers, pre-flight cost estimation, 5 new free providers, and enhanced smart routing. Whether you're a developer prototyping an AI app, a student exploring LLMs, or a team building a production pipeline, ProxyGateLLM gives you free, reliable access to hundreds of models through a single endpoint.
-
----
-
-## Why ProxyGateLLM?
-
-Choosing an LLM gateway can be overwhelming. ProxyGateLLM distinguishes itself through a relentless focus on **free access**, **reliability**, and **simplicity**. Unlike commercial gateways that charge per token or require paid API keys for every provider, ProxyGateLLM starts with 10 providers that need zero configuration — no signup, no API key, no credit card. You clone, install, and start chatting with GPT-4o, Claude, DeepSeek, Llama, and more within 60 seconds.
-
-The v6.0.0 release adds OmniRoute-inspired production features that set it apart from other free gateways. The **4-state circuit breaker** (CLOSED → DEGRADED → OPEN → HALF_OPEN) with failure-kind-aware adaptive backoff ensures that failing providers are isolated quickly without permanently blocking them. **Pre-flight cost estimation** for 30+ models lets you preview the cost of a request before you send it — and automatically detect when a free provider is available, so you always know if your request is truly free. **Smart routing** combines health status, priority, round-robin, and cost optimization to pick the best provider automatically, while **enhanced failover** with error classification ensures graceful degradation when providers go down.
-
-The dependency footprint is deliberately minimal — just 4 packages. There is no build step, no TypeScript compilation, no Docker requirement. It runs on plain Node.js with ESM modules, making it transparent, auditable, and easy to modify. The built-in PWA dashboard provides real-time visibility into provider health, circuit breaker states, request logs, and cost tracking — all without any external monitoring tool. In short, ProxyGateLLM is the simplest, most powerful way to access multiple LLMs for free, with enterprise-grade reliability baked in.
-
----
-
-## Feature Comparison
-
-| Feature | ProxyGateLLM v6 | LiteLLM | OpenRouter | OmniRoute | AI Chat API |
-|---|---|---|---|---|---|
-| **Free providers (no key)** | **10** | 0 | 0 | 5 | 3 |
-| **Total providers** | **22** | 100+ | 70+ | 12 | 8 |
-| **Circuit breaker** | **4-state + adaptive** | No | No | 4-state | No |
-| **Cost estimation** | **Pre-flight, 30+ models** | Post-hoc | Post-hoc | Pre-flight | No |
-| **OpenAI-compatible API** | **Yes** | Yes | Yes | Yes | Partial |
-| **Anthropic-compatible API** | **Yes** | Yes | No | No | No |
-| **Streaming (SSE)** | **All providers** | Most | Yes | Most | Some |
-| **Smart auto-routing** | **Health + cost + priority** | Basic | No | Health + cost | Basic |
-| **Failover** | **Circuit-aware, error-classified** | Basic | No | Circuit-aware | No |
-| **Self-hosted** | **Yes** | Yes | No | Yes | No |
-| **API key required** | **No (10 free)** | Yes (all) | Yes | Partial | No (3) |
-| **Dependencies** | **4** | 15+ | N/A (SaaS) | 8+ | 5+ |
-| **Dashboard** | **PWA built-in** | No | Web UI | Basic | No |
-| **MCP protocol** | **Yes** | No | No | No | No |
-| **MIT License** | **Yes** | Yes | Proprietary | MIT | Varies |
-| **Node.js only** | **Yes** | Python | N/A | Node.js | Node.js |
-
-> **Key differentiator**: ProxyGateLLM is the only gateway offering 10 completely free (no key, no signup) providers alongside production-grade circuit breakers and cost estimation — all in a 4-dependency, self-hosted Node.js package.
+> **Transparency Note**: "Free" providers use **Puter.js client-side authentication** (user-pays model). The 10 no-key providers work without user API keys, but usage is subject to Puter.js rate limits and fair use policies. BYOAPI providers require your own paid API keys. This is **not** an unlimited free service — it's a gateway that makes free-tier access convenient.
 
 ---
 
 ## 22 Providers
 
-ProxyGateLLM aggregates 22 providers across three tiers. Each provider is wrapped in a dedicated adapter that handles authentication, request formatting, response normalization, streaming, and health checking. Providers are categorized into three tiers based on access requirements: **FREE** (no API key, no signup), **FREE KEY** (free tier with signup), and **BYOAPI** (bring your own paid API key). The circuit breaker operates independently on each provider, so a failing paid provider won't affect your free providers, and vice versa.
+| # | Provider | Category | Key Required | Notes |
+|---|----------|----------|:------------:|-------|
+| 1 | OpenAI GPT-4o-mini | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 2 | OpenAI GPT-4o | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 3 | Claude 3.5 Sonnet | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 4 | Claude 3 Haiku | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 5 | Gemini 2.0 Flash | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 6 | Gemini 1.5 Pro | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 7 | Llama 3.1 70B | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 8 | Llama 3.1 8B | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 9 | Mixtral 8x7B | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 10 | Command R+ | 🟢 FREE no-key | ❌ | Via Puter.js |
+| 11 | Groq (Llama/Mixtral) | 🟡 FREE-key | ✅ Free signup | groq.com |
+| 12 | Together AI | 🟡 FREE-key | ✅ Free signup | together.ai |
+| 13 | Fireworks AI | 🟡 FREE-key | ✅ Free signup | fireworks.ai |
+| 14 | Cerebras | 🟡 FREE-key | ✅ Free signup | cerebras.ai |
+| 15 | SambaNova | 🟡 FREE-key | ✅ Free signup | sambanova.ai |
+| 16 | Mistral AI | 🟡 FREE-key | ✅ Free signup | mistral.ai |
+| 17 | Cohere | 🟡 FREE-key | ✅ Free signup | cohere.com |
+| 18 | AI21 Labs | 🟡 FREE-key | ✅ Free signup | ai21.com |
+| 19 | OpenAI (Direct) | 🔴 BYOAPI | ✅ Paid key | platform.openai.com |
+| 20 | Anthropic (Direct) | 🔴 BYOAPI | ✅ Paid key | console.anthropic.com |
+| 21 | Google AI (Direct) | 🔴 BYOAPI | ✅ Paid key | aistudio.google.com |
+| 22 | Azure OpenAI | 🔴 BYOAPI | ✅ Paid key | azure.microsoft.com |
 
-### FREE — No API Key Required (10 providers)
-
-These providers require absolutely zero configuration. No account, no API key, no credit card. They are enabled by default and work immediately after `npm start`. While some may have rate limits or less reliability than paid providers, the circuit breaker and automatic failover ensure you always get a response from the pool.
-
-| # | Provider | Models | Notes |
-|---|----------|--------|-------|
-| 1 | **Pollinations AI** | GPT-4o Mini, Mistral, Llama, DeepSeek R1, Qwen | OpenAI-compatible, streaming, highly reliable |
-| 2 | **DuckDuckGo AI Chat** | GPT-4o Mini, Claude 3 Haiku, Llama 3.1 70B, Mixtral | VQD token auth, streaming, privacy-focused |
-| 3 | **LLM7.io** | GPT-4o, DeepSeek Chat/R1, Llama 3.3 70B, Qwen Coder | OpenAI-compatible, 30+ models, streaming |
-| 4 | **DeepAI** | Free chat mode | No login, simulated streaming |
-| 5 | **FreeGPT** | GPT-4o, GPT-4o Mini, GPT-4 | Simulated streaming |
-| 6 | **Api.airforce** | GPT-4o, DeepSeek, Llama | 55+ free models, streaming |
-| 7 | **Venice.ai** | Llama 3.3 70B, DeepSeek R1, Qwen Coder, Gemma 3 | Privacy-focused, streaming |
-| 8 | **G4F/FreeGPT** | GPT-4o, GPT-4o Mini, Claude 3.5 Sonnet | Python-based, fragile (priority 3) |
-| 9 | **Blackbox AI** | Blackbox AI, Blackbox AI Pro | Reverse-engineered (priority 3) |
-| 10 | **Phind** | Phind 70B | Code specialist, reverse-engineered (priority 3) |
-
-> **Tip**: Providers 1-7 (Pollinations through Venice) are the most reliable free providers. Providers 8-10 (G4F, Blackbox, Phind) use reverse-engineered endpoints that may break — the circuit breaker will automatically isolate them when they fail.
-
-### FREE KEY — Signup Required (8 providers)
-
-These providers offer generous free tiers that only require creating a free account. Once you obtain a free API key and add it to your `.env` file, ProxyGateLLM automatically enables them. The free allowances are substantial — for example, Google AI Studio offers 1,500 requests per day, and Cerebras provides 1 million tokens per day at no cost.
-
-| # | Provider | Models | Free Tier |
-|---|----------|--------|-----------|
-| 11 | **Puter.js SDK** | DeepSeek Chat, GPT-5, GPT-4o, Claude Opus 4.5, Grok 3, etc. | 500+ models via free Puter account |
-| 12 | **OpenRouter Free** | 337+ free models | Optional key, streaming |
-| 13 | **Google AI Studio** | Gemini 2.0/2.5, Gemma 3 | 1,500 req/day free |
-| 14 | **Groq** | Llama 3.3 70B, Mixtral, Gemma 2 | 30 RPM free |
-| 15 | **Cerebras** | Llama 4 Scout, Llama 3.1 | 1M tokens/day free |
-| 16 | **Cloudflare Workers AI** | Llama 3.3 70B, Qwen 3, Gemma 3, Mistral | 10K neurons/day free |
-| 17 | **Cohere** | Command A, Command R/R+ | Free tier available |
-| 18 | **HuggingFace** | Llama 3.1 70B, Mixtral, Qwen Coder | Free inference API |
-
-### BYOAPI — Requires API Key (4 providers)
-
-These are paid providers where you bring your own API key. They offer the highest reliability and the most capable models. Several provide free credits upon signup (Together AI: $5, SambaNova: $5, Inference.net: $10), making them effectively free for initial experimentation. ProxyGateLLM's cost estimator helps you track spending across these providers.
-
-| # | Provider | Models | Free Credit |
-|---|----------|--------|-------------|
-| 19 | **Together AI** | Llama 3.3 70B, DeepSeek R1, Qwen Coder | $5 free credit |
-| 20 | **SambaNova** | DeepSeek V3.1 671B, Llama 3.3, Qwen 2.5 | $5 free |
-| 21 | **Scaleway** | Llama 3.3 70B, Mistral Nemo, Qwen Coder | Pay-per-use |
-| 22 | **Inference.net** | Llama 3.3 70B, DeepSeek R1, Qwen Coder | $10 free |
+> **Legend**: 🟢 FREE no-key = Works immediately via Puter.js · 🟡 FREE-key = Requires free signup at provider · 🔴 BYOAPI = Bring Your Own (paid) API Key
 
 ---
 
-## What's New in v6.0.0
+## Features
 
-Version 6.0.0 is the largest release in ProxyGateLLM history, inspired by the architectural patterns and production-grade features of [OmniRoute](https://github.com/mulkymalikuldhrs/OmniRoute). This release fundamentally transforms ProxyGateLLM from a simple proxy into a production-ready LLM gateway with enterprise reliability features, while preserving its core promise: free, zero-configuration access to powerful AI models.
+### 🔌 Unified API Endpoint
+A single OpenAI-compatible `/v1/chat/completions` endpoint that routes across all 22 providers. Just change the `baseURL` in your existing OpenAI SDK code — no other changes needed.
 
-### Circuit Breaker (OmniRoute-Inspired)
+### 🛡️ Circuit Breaker
+Automatic failure detection with configurable cooldown periods. When a provider fails repeatedly, the circuit breaker trips and routes traffic to healthy alternatives — preventing cascading failures and timeout waits.
 
-The flagship feature of v6.0.0 is a **4-state circuit breaker** with failure-kind-aware adaptive backoff, operating independently on each of the 22 providers. Unlike simple retry logic, the circuit breaker continuously monitors the health of each provider and makes intelligent decisions about when to route traffic, when to back off, and when to probe for recovery. The four states — CLOSED (healthy, all traffic allowed), DEGRADED (some failures, still accepting but with caution), OPEN (too many failures, traffic blocked), and HALF_OPEN (probing for recovery) — provide fine-grained control over provider availability. The breaker classifies failures into 7 kinds (rate_limit, quota_exhausted, transient, auth_failure, timeout, server_error, network_error) and applies kind-specific cooldowns: a rate limit triggers a 60-second backoff, while an auth failure triggers a 30-minute backoff. This means the system responds appropriately to different failure modes rather than treating all errors equally.
+### 🧠 Smart Routing
+Round-robin failover, priority-based selection, and latency-aware routing. Configure which providers to prefer and the gateway automatically balances load while falling back on errors.
 
-### Cost Estimation
+### 💰 Cost Estimation
+Real-time approximate cost tracking per request with token counting and provider rate tables. Get visibility into spending across providers — note that estimates are approximate and may differ from actual billing.
 
-A new **pre-flight cost estimation** engine allows you to preview the cost of any request before sending it. The estimator maintains pricing data for 30+ models across OpenAI, Anthropic, Google, DeepSeek, xAI, Llama, Mistral, Qwen, and others, with automatic fuzzy matching for model name variants. When you hit the `/v1/cost-estimate` endpoint, the engine estimates input token count from your messages (using a character-based approximation that accounts for CJK text), applies the pricing table, and returns a detailed breakdown including input cost, output cost, total cost, and whether the request is free. Free providers are automatically detected, so you always know when a request costs $0.00. The cost estimate is also attached to every chat completion response in the `_meta` field, giving you cost visibility on every request without an extra API call.
+### 📊 PWA Dashboard
+Built-in Progressive Web App for monitoring provider health, request throughput, error rates, and cost metrics — all from a single interface accessible at `/dashboard`.
 
-### 5 New Free Providers
+### 🪶 Minimal Dependencies
+Only 4 runtime dependencies: `express`, `dotenv`, `@heyputer/puter.js`, and `@anthropic-ai/sdk`. Small attack surface, fast installs, easy auditing.
 
-v6.0.0 adds five new zero-configuration free providers, expanding the no-auth pool from 5 to 10. **LLM7.io** provides an OpenAI-compatible gateway with 30+ models including GPT-4o and DeepSeek R1 — one of the most capable free providers available. **DeepAI** offers a simple free chat mode with no login required. **FreeGPT** provides access to GPT-4o, GPT-4o Mini, and GPT-4. **Api.airforce** aggregates 55+ free models with streaming support. **Venice.ai** brings privacy-focused AI with Llama 3.3 70B, DeepSeek R1, and Qwen Coder. Together, these new providers significantly increase the redundancy and model diversity available without any API keys, making the free tier more robust than ever.
+### 🔄 Provider Failover
+If a provider returns an error, the gateway automatically retries with the next available provider in the same category — seamless resilience without client-side retry logic.
 
-### Smart Routing & Enhanced Failover
+### 🐳 Docker Ready
+One-command deployment with Docker and Docker Compose. Production-ready containerization with configurable environment variables.
 
-The routing engine has been completely overhauled with **health-aware, priority-based, round-robin, and cost-optimized** strategies. When multiple providers offer the same model, the router sorts them by circuit breaker state (prefer CLOSED over DEGRADED over OPEN), then by health status, then by priority level, and finally by average latency. Among equally-ranked healthy providers, round-robin distributes load evenly. The enhanced failover system integrates deeply with the circuit breaker: when a provider fails, the error is classified into a failure kind, the circuit breaker updates its state accordingly, and the next provider in the sorted list is tried automatically. This ensures that a single failing provider never blocks the entire request — the system degrades gracefully, always finding the best available provider.
+---
 
-### New API Endpoints
+## Honest Notes
 
-Three new endpoints provide visibility and control over the gateway's internal state. `GET /providers/free` lists all free (no-key) providers with their current health status and model counts. `GET /circuit-breakers` returns the full circuit breaker state for every provider, including failure counts, transition history, and remaining cooldown periods. `POST /v1/cost-estimate` provides pre-flight cost estimation with token counting and pricing breakdown. These endpoints make it easy to build monitoring dashboards, alerting systems, and cost optimization tools on top of ProxyGateLLM.
+> We believe in transparency. Here are important limitations and clarifications you should know before using ProxyGateLLM.
+
+- **"Free" providers use Puter.js client-side billing** — users authenticate and pay through Puter.js, not via API keys. Puter.js manages the billing relationship, not this gateway.
+- **Provider availability depends on third-party services** that may change, deprecate models, or impose rate limits at any time.
+- **Free-tier providers have usage limits** — they are suitable for development, prototyping, and light workloads, but **not for high-volume production**.
+- **Circuit breaker thresholds are configurable but require tuning** per deployment environment. Default settings may be too aggressive or too lenient for your traffic patterns.
+- **Cost estimation is approximate** — actual costs depend on provider pricing changes, tokenization differences, and rounding. Do not rely on estimates for exact billing.
+- **This is a gateway, not an LLM provider** — ProxyGateLLM routes requests to existing providers. It does not host or serve models itself.
 
 ---
 
 ## Architecture
 
-ProxyGateLLM v6.0.0 implements a **5-layer architecture** designed for separation of concerns, extensibility, and production reliability. Each layer has a clear responsibility and communicates with adjacent layers through well-defined interfaces, making it straightforward to add new providers, modify routing logic, or replace individual components without affecting the rest of the system.
-
 ```
-┌──────────────────────────────────────────────────────────┐
-│                   Layer 1: API Gateway                    │
-│   Express server, CORS, rate limiting, auth, logging     │
-│   OpenAI + Anthropic + Native + MCP endpoints            │
-├──────────────────────────────────────────────────────────┤
-│                  Layer 2: Request Router                  │
-│   Model resolution, alias mapping, task-type detection   │
-│   Auto-routing (code→Claude, plan→DeepSeek, fast→mini)  │
-├──────────────────────────────────────────────────────────┤
-│                Layer 3: Provider Manager                  │
-│   Health monitoring, circuit breaker registry, failover  │
-│   Cost estimation, round-robin, priority routing         │
-├──────────────────────────────────────────────────────────┤
-│               Layer 4: Provider Adapters                  │
-│   22 adapters (pollinations, duckduckgo, llm7, puter,   │
-│   groq, openrouter, google-ai, cerebras, etc.)          │
-│   Each handles: auth, request format, response normalize │
-├──────────────────────────────────────────────────────────┤
-│                 Layer 5: Model Sync                       │
-│   Auto-discover models from OpenRouter, Groq, etc.      │
-│   Model alias registry, pricing data, capabilities      │
-└──────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────┐
+│                        Client Application                        │
+│                   (OpenAI SDK / HTTP / Dashboard)                │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │  POST /v1/chat/completions
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      ProxyGateLLM Gateway                        │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────────┐  │
+│  │   Router     │  │   Circuit    │  │    Cost Estimator     │  │
+│  │  (Priority/  │──│   Breaker    │  │  (Token Counting +    │  │
+│  │   Round-     │  │  (Failure    │  │   Rate Tables)        │  │
+│  │   Robin)     │  │  Detection)  │  │                       │  │
+│  └──────┬───────┘  └──────┬───────┘  └───────────────────────┘  │
+│         │                 │                                      │
+│  ┌──────▼─────────────────▼──────────────────────────────────┐   │
+│  │                    Provider Adapter Layer                   │   │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐               │   │
+│  │  │ Puter.js │  │ Direct   │  │  Custom  │               │   │
+│  │  │ Adapter  │  │ SDK      │  │  REST    │               │   │
+│  │  │ (10+8)   │  │ Adapter  │  │  Adapter │               │   │
+│  │  └────┬─────┘  └────┬─────┘  └────┬─────┘               │   │
+│  └───────┼──────────────┼─────────────┼──────────────────────┘   │
+└──────────┼──────────────┼─────────────┼──────────────────────────┘
+           │              │             │
+     ┌─────▼─────┐  ┌────▼─────┐  ┌───▼──────┐
+     │  Puter.js  │  │ Anthropic│  │  OpenAI  │
+     │  Cloud     │  │   API    │  │   API    │
+     │ (Free+Key) │  │ (BYOAPI) │  │ (BYOAPI) │
+     └────────────┘  └──────────┘  └──────────┘
 ```
-
-**Layer 1 — API Gateway**: The Express.js server handles HTTP concerns: JSON body parsing, CORS headers, rate limiting (configurable window/max), optional API key authentication, and request/response logging. It exposes the OpenAI-compatible, Anthropic-compatible, native auto-routed, cost estimation, health check, and MCP endpoints.
-
-**Layer 2 — Request Router**: Resolves model aliases (e.g., "gpt4" → "gpt-4o", "claude" → "claude-opus-4-5-latest"), detects task types from message content (code, planning, reasoning, fast, general), and selects the optimal model when the user passes `model: "auto"`. This layer ensures that even vague requests are routed to the most appropriate model.
-
-**Layer 3 — Provider Manager**: The brain of the system. Manages the circuit breaker registry (one breaker per provider), performs periodic health checks (every 60 seconds by default), estimates request costs, sorts providers by reliability/health/priority/latency, and executes failover with error classification. Tracks aggregate statistics including total requests, estimated costs, and round-robin state.
-
-**Layer 4 — Provider Adapters**: Each of the 22 providers has a dedicated adapter that extends a common base class. Adapters handle provider-specific authentication (API keys, VQD tokens, cookies), request formatting, response normalization into OpenAI format, streaming (SSE, simulated streaming, ReadableStream), and health checking. This layer abstracts away the heterogeneity of 22 different APIs into a uniform interface.
-
-**Layer 5 — Model Sync**: Automatically discovers and syncs available models from providers that expose a model list API (OpenRouter, Groq, etc.). Maintains the model alias registry, pricing data for cost estimation, and capability metadata (max tokens, type, description). This ensures the model catalog stays up-to-date without manual configuration.
 
 ---
 
-## Circuit Breaker Deep Dive
+## Circuit Breaker
 
-The circuit breaker is the cornerstone of ProxyGateLLM v6.0.0's reliability, inspired by the patterns established in [OmniRoute](https://github.com/mulkymalikuldhrs/OmniRoute). It operates on each provider independently, ensuring that a failing provider is quickly isolated without affecting the availability of other providers. The breaker maintains fine-grained state that goes far beyond a simple "up/down" check — it tracks failure kinds, applies adaptive backoff, and probes for recovery automatically.
+The circuit breaker protects your application from cascading failures when a provider goes down or becomes unresponsive.
 
-### 4-State Model
+### How It Works
 
 ```
-CLOSED ──(failures ≥ degraded threshold)──→ DEGRADED
-DEGRADED ──(failures ≥ threshold)──→ OPEN
-OPEN ──(reset timeout elapsed)──→ HALF_OPEN
-HALF_OPEN ──(success)──→ CLOSED
-HALF_OPEN ──(failure)──→ OPEN (escalated timeout)
+         ┌──────────┐    Failure threshold    ┌──────────┐
+    ────►│  CLOSED  │─────────────────────────►│   OPEN   │
+         │ (normal) │                          │ (tripped)│
+         └────┬─────┘                          └────┬─────┘
+              │                                     │
+              │  Success                    Cooldown │
+              │  (reset failure                 expires│
+              │   counter)                          │
+              │                                     ▼
+              │                              ┌──────────┐
+              └──────────────────────────────│HALF-OPEN │
+                                             │ (probing)│
+                                             └──────────┘
 ```
 
-- **CLOSED**: The provider is healthy. All traffic is routed normally. This is the default state when the server starts.
-- **DEGRADED**: Some failures have been detected (typically 60% of the failure threshold). The provider still accepts traffic, but the router will prefer other providers at the same priority level. After 3 consecutive successes, the breaker transitions back to CLOSED.
-- **OPEN**: Too many failures have accumulated. The provider is completely blocked — no traffic is sent. The breaker waits for a reset timeout before transitioning to HALF_OPEN for a probe attempt.
-- **HALF_OPEN**: A single probe request is allowed. If it succeeds, the breaker transitions to CLOSED (provider recovered). If it fails, the breaker transitions back to OPEN with an escalated timeout (doubled, up to 5 minutes max).
+| State | Behavior |
+|-------|----------|
+| **CLOSED** | Normal operation. Requests flow to the provider. Failures are counted. |
+| **OPEN** | Provider is tripped. All requests bypass this provider. Cooldown timer starts. |
+| **HALF-OPEN** | Cooldown expired. A single probe request is sent. If it succeeds → CLOSED. If it fails → OPEN again. |
 
-### Failure Kind Classification
+### Configuration
 
-Not all failures are equal. The breaker classifies errors into 7 kinds and applies kind-specific thresholds and cooldowns:
+```env
+# .env
+CIRCUIT_BREAKER_FAILURE_THRESHOLD=5    # Failures before tripping
+CIRCUIT_BREAKER_COOLDOWN_MS=30000      # Cooldown duration (30s)
+CIRCUIT_BREAKER_HALF_OPEN_PROBES=1     # Probe requests in half-open state
+```
 
-| Failure Kind | Threshold | Cooldown | Example |
-|---|---|---|---|
-| `rate_limit` | 2 failures | 60 seconds | HTTP 429 Too Many Requests |
-| `quota_exhausted` | 1 failure | 60 minutes | Free tier exhausted |
-| `auth_failure` | 1 failure | 30 minutes | HTTP 401/403 Invalid API Key |
-| `timeout` | Default (5) | Default (30s) | Request exceeded timeout |
-| `server_error` | Default (5) | Default (30s) | HTTP 500 Internal Server Error |
-| `network_error` | Default (5) | Default (30s) | ECONNREFUSED, fetch failed |
-| `transient` | Default (5) | 10 seconds | Temporary glitch |
-
-This means that an authentication failure immediately opens the circuit (threshold = 1) with a 30-minute cooldown — there is no point retrying a bad API key. A rate limit, on the other hand, allows 2 failures before opening the circuit with a shorter 60-second cooldown, since rate limits are often temporary.
-
-### Adaptive Backoff
-
-When a HALF_OPEN probe fails, the reset timeout is multiplied by an escalation factor (default: 2x), up to a maximum of 5 minutes. This prevents the breaker from constantly probing a truly broken provider while still allowing recovery detection. The transition history (last 5 transitions) is recorded for debugging and monitoring via the `/circuit-breakers` endpoint.
+> **Note**: These defaults are a starting point. High-traffic deployments may need shorter cooldowns and higher thresholds. Low-traffic deployments may need longer cooldowns to avoid premature re-probing. **Tune per deployment.**
 
 ---
 
 ## Cost Estimation
 
-ProxyGateLLM v6.0.0 introduces pre-flight cost estimation, allowing you to know the cost of a request before you send it. This is especially valuable when using paid BYOAPI providers, where a single request with a large context can cost significantly more than expected. The cost estimator maintains a pricing table for 30+ models and automatically detects free providers.
+ProxyGateLLM provides approximate cost tracking for every request. Understanding how it works helps you interpret the numbers correctly.
 
-### How It Works
+### How Costs Are Calculated
 
-1. **Token Estimation**: The estimator counts characters in your messages and converts to approximate tokens (~4 chars/token for English, ~2 chars/token for CJK text), plus 4 tokens per message for formatting overhead.
-2. **Pricing Lookup**: The model ID is matched against the pricing table. Fuzzy matching is applied (e.g., "gpt4o" matches "gpt-4o"), and a default rate is used for unknown models.
-3. **Free Detection**: If the model is available on a free provider (Pollinations, DuckDuckGo, LLM7, etc.), the cost is reported as `$0.00 (FREE)`.
-4. **Output Estimation**: If output tokens are not specified, the estimator defaults to `min(input_tokens, 4096)`.
+```
+Estimated Cost = (prompt_tokens × input_rate) + (completion_tokens × output_rate)
+```
 
-### Pricing Table (per 1M tokens, USD)
+Rates are stored per-provider in a configurable rate table. For example:
 
-| Model | Input | Output |
-|---|---|---|
-| GPT-4o | $2.50 | $10.00 |
-| GPT-4o Mini | $0.15 | $0.60 |
-| GPT-5 Chat | $5.00 | $15.00 |
-| Claude Opus 4.5 | $15.00 | $75.00 |
-| Claude Sonnet 4 | $3.00 | $15.00 |
-| Claude Haiku 4.5 | $0.80 | $4.00 |
-| Gemini 2.0 Flash | $0.10 | $0.40 |
-| DeepSeek Chat | $0.27 | $1.10 |
-| DeepSeek R1 | $0.55 | $2.19 |
-| Grok 3 | $3.00 | $15.00 |
-| Llama 3.3 70B | $0.20 | $0.80 |
-| Qwen 2.5 Coder | $0.10 | $0.40 |
-| Mixtral 8x7B | $0.24 | $0.24 |
+| Provider | Input Rate (per 1M tokens) | Output Rate (per 1M tokens) |
+|----------|:--------------------------:|:---------------------------:|
+| GPT-4o-mini | ~$0.15 | ~$0.60 |
+| Claude 3.5 Sonnet | ~$3.00 | ~$15.00 |
+| Gemini 1.5 Pro | ~$1.25 | ~$5.00 |
+| Llama 3.1 70B (free) | $0.00 | $0.00 |
 
-> **Note**: When a free provider is available for your model, the cost estimator will report `$0.00 (FREE)`. The `_meta.estimated_cost` field on every response tells you what the request *would* have cost on a paid provider.
+### Important Caveats
+
+- **Estimates are approximate** — provider pricing changes frequently and may not be immediately updated in the rate table
+- **Tokenization varies** — different providers may count tokens differently, leading to cost discrepancies
+- **Free-tier providers show $0.00** — but Puter.js may still bill on its end; this gateway only tracks what it can measure
+- **Rounding errors accumulate** — for precise billing, always refer to your provider's dashboard
+
+### Accessing Cost Data
+
+Cost data is available via the `/v1/usage` endpoint and displayed in the PWA dashboard.
 
 ---
 
 ## Smart Routing
 
-ProxyGateLLM's smart routing engine is the intelligence layer that determines which provider handles each request. It combines four routing strategies with the circuit breaker and health monitoring to make optimal decisions automatically, without any manual configuration from the user.
-
-### Auto-Routing (model: "auto")
-
-When you don't specify a model (or pass `model: "auto"`), the router analyzes your message content to determine the task type and selects the best model automatically:
-
-| Task Type | Trigger Keywords | Selected Model |
-|---|---|---|
-| **Code** | code, implement, debug, function, class, deploy, build | Claude Opus 4.5 |
-| **Planning** | plan, design, strategy, analyze, architect, roadmap | DeepSeek Chat |
-| **Reasoning** | reason, solve, explain, calculate, prove, math | GPT-4o |
-| **Fast** | Short questions (< 100 chars), simple queries | GPT-4o Mini |
-| **General** | Everything else | DeepSeek Chat |
-
-### Provider Selection
-
-When multiple providers offer the same model, the router sorts them by:
-
-1. **Circuit breaker state**: CLOSED > DEGRADED > HALF_OPEN > OPEN (blocked)
-2. **Health status**: healthy > unknown > degraded > down
-3. **Priority level**: Priority 1 (free/reliable) > Priority 2 (free key/paid) > Priority 3 (fragile/reverse-engineered)
-4. **Average latency**: Lower is better (tracked per provider)
-5. **Round-robin**: Among equally-ranked healthy providers, distribute evenly
+ProxyGateLLM routes requests intelligently across providers to maximize availability and minimize latency.
 
 ### Routing Strategies
 
-| Strategy | Description | Use Case |
-|---|---|---|
-| `priority` | Use highest-priority healthy provider | Default — prefers free, reliable providers |
-| `round_robin` | Distribute evenly across providers | Load balancing across paid providers |
-| `least_latency` | Route to fastest provider | Latency-sensitive applications |
-| `random` | Random selection among healthy | Testing, simple distribution |
-| `cost_optimized` | Prefer free/cheapest providers | Cost-conscious production use |
+| Strategy | Description | Best For |
+|----------|-------------|----------|
+| **Priority** | Tries providers in configured order, falling back on failure | When you prefer specific providers |
+| **Round-Robin** | Cycles through available providers evenly | Distributing load across free providers |
+| **Latency-Aware** | Routes to the provider with the lowest recent latency | Performance-critical applications |
+| **Cost-Optimized** | Prefers cheaper providers when multiple can serve the model | Budget-conscious workloads |
 
----
+### Configuration Example
 
-## API Reference
-
-ProxyGateLLM exposes 13 endpoints covering chat completions, messages, cost estimation, health monitoring, provider management, circuit breaker inspection, MCP protocol, and a web dashboard. All chat endpoints support both streaming (SSE) and non-streaming modes. The OpenAI and Anthropic endpoints are fully compatible with their respective SDKs — just change the `baseURL` and you're done.
-
-### Chat Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/v1/chat/completions` | OpenAI-compatible chat completions (streaming + non-streaming) |
-| `POST` | `/v1/messages` | Anthropic-compatible messages API (streaming + non-streaming) |
-| `POST` | `/chat` | Native auto-routed chat (model auto-detection) |
-| `POST` | `/v1/cost-estimate` | Pre-flight cost estimation for a request |
-
-### Monitoring Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/health` | Simple health check (status, uptime, version) |
-| `GET` | `/status` | Full server status (providers, circuit breakers, model sync, rate limiting) |
-| `GET` | `/models` | List all available models with provider info |
-| `GET` | `/providers` | Provider details and stats for all providers |
-| `GET` | `/providers/free` | Free providers only (no API key required) |
-| `GET` | `/circuit-breakers` | Circuit breaker state for all providers |
-| `GET` | `/logs` | Recent request logs (paginated, `?limit=&offset=`) |
-
-### Other Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/mcp` | Model Context Protocol (JSON-RPC 2.0) |
-| `GET` | `/dashboard` | Web dashboard (PWA) |
-
-### Request Format (OpenAI-compatible)
-
-```json
-{
-  "model": "gpt-4o",
-  "messages": [
-    {"role": "system", "content": "You are a helpful assistant."},
-    {"role": "user", "content": "Hello!"}
-  ],
-  "stream": false
-}
+```env
+# .env
+ROUTING_STRATEGY=priority          # priority | round-robin | latency | cost
+PROVIDER_PRIORITY=gpt-4o-mini,claude-3.5-sonnet,gemini-2.0-flash
+FAILOVER_ENABLED=true              # Auto-retry on next provider
+MAX_RETRIES=3                      # Max retry attempts per request
 ```
 
-### Response Format (OpenAI-compatible)
+### Failover Flow
 
-```json
-{
-  "id": "chatcmpl-1700000000",
-  "object": "chat.completion",
-  "created": 1700000000,
-  "model": "gpt-4o",
-  "choices": [{
-    "index": 0,
-    "message": {"role": "assistant", "content": "Hello! How can I help you?"},
-    "finish_reason": "stop"
-  }],
-  "usage": {},
-  "_meta": {
-    "provider": "pollinations",
-    "latency_ms": 1234,
-    "estimated_cost": "$0.00 (FREE)",
-    "is_free": true
-  }
-}
 ```
+Request ──► Provider A ──► Error ──► Provider B ──► Error ──► Provider C ──► Success
+                                    (circuit breaker      (circuit breaker
+                                     skips tripped)        allows probe)
+```
+
+When a request fails, the router immediately tries the next healthy provider in the priority chain. The circuit breaker ensures tripped providers are skipped, avoiding wasted time on known-failing endpoints.
 
 ---
 
 ## Quick Start
 
-Getting ProxyGateLLM running takes less than 60 seconds. The only prerequisite is Node.js 18 or later — no Python, no Docker, no database, no build step. After cloning the repository and installing the 4 dependencies, you can start the server immediately. All 10 free providers are enabled by default, so you'll have access to GPT-4o, Claude, DeepSeek, Llama, and more without configuring a single API key.
+### Prerequisites
 
-### 1. Clone & Install
+- **Node.js** >= 18
+- **npm** >= 9
+
+### Installation
 
 ```bash
+# 1. Clone the repository
 git clone https://github.com/mulkymalikuldhrs/ProxyGateLLM.git
 cd ProxyGateLLM
+
+# 2. Install dependencies
 npm install
-```
 
-### 2. Configure (Optional)
-
-```bash
+# 3. Configure environment
 cp .env.example .env
-# Edit .env to add optional API keys for free-key and BYOAPI providers
-# 10 providers work without any keys!
-```
+# Edit .env — add BYOAPI keys if you have them (optional)
 
-### 3. Start
-
-```bash
+# 4. Start the gateway
 npm start
 ```
 
-You'll see the startup banner:
-
-```
-╔══════════════════════════════════════════════════════════════════════╗
-║  ProxyGateLLM v6.0.0 — The Biggest Free Multi-LLM Hub              ║
-╠══════════════════════════════════════════════════════════════════════╣
-║  Running on http://localhost:3333                                    ║
-╠══════════════════════════════════════════════════════════════════════╣
-║  POST /chat                 - Chat (auto-routing)                    ║
-║  POST /v1/chat/completions  - OpenAI-compatible API                  ║
-║  POST /v1/messages          - Anthropic-compatible API               ║
-║  POST /v1/cost-estimate     - Pre-flight cost estimation             ║
-║  GET  /health               - Health check                           ║
-║  GET  /status               - Server + provider status               ║
-║  GET  /models               - List all available models              ║
-║  GET  /providers            - Provider details & stats               ║
-║  GET  /providers/free       - Free providers only                    ║
-║  GET  /circuit-breakers     - Circuit breaker status                 ║
-║  POST /mcp                  - MCP (Model Context Protocol)           ║
-║  GET  /dashboard            - Web dashboard                          ║
-╠══════════════════════════════════════════════════════════════════════╣
-║  Providers: 22 active (10 free)  |  Models: 430+ available           ║
-║  Circuit Breaker: ON  |  Cost Estimation: ON  |  Streaming: ON      ║
-╚══════════════════════════════════════════════════════════════════════╝
-```
-
-### 4. Test
+### Verify
 
 ```bash
-# Quick test — auto-routed (picks best model)
-curl http://localhost:3333/chat \
-  -H "Content-Type: application/json" \
-  -d '{"messages": [{"role": "user", "content": "Hello!"}]}'
-
-# OpenAI-compatible
-curl http://localhost:3333/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "Hello!"}]}'
-
-# Cost estimation
-curl http://localhost:3333/v1/cost-estimate \
-  -H "Content-Type: application/json" \
-  -d '{"model": "gpt-4o", "messages": [{"role": "user", "content": "Hello!"}]}'
-
-# Health check
-curl http://localhost:3333/health
+# Gateway should be running at http://localhost:3333
+curl http://localhost:3333/v1/models
 ```
 
----
+### Test a Chat Completion
 
-## Configuration
-
-ProxyGateLLM is configured through environment variables, loaded from a `.env` file in the project root. Copy `.env.example` to `.env` and customize as needed. The default configuration works out of the box with 10 free providers — you only need to set environment variables if you want to enable free-key or BYOAPI providers, change the port, or adjust rate limiting.
-
-```env
-# ── Server ────────────────────────────────────────
-PORT=3333                          # Server port (default: 3333)
-API_KEY=                           # Optional: require API key for all requests
-CORS_ORIGIN=                       # Optional: restrict CORS (default: * = allow all)
-LOG_LEVEL=info                     # Log level: info | debug (debug for verbose)
-NODE_ENV=development               # development | production
-
-# ── Rate Limiting ─────────────────────────────────
-RATELIMIT_WINDOW_MS=60000          # Rate limit window in milliseconds
-RATELIMIT_MAX_REQUESTS=100         # Max requests per window
-
-# ── Health Monitoring ─────────────────────────────
-HEALTH_CHECK_INTERVAL_MS=60000     # Health check interval in milliseconds
-
-# ── Free Key Providers (signup required) ──────────
-PUTER_AUTH_TOKEN=                  # Puter.js SDK — free, 500+ models
-GOOGLE_AI_API_KEY=                 # Google AI Studio — 1,500 req/day free
-GROQ_API_KEY=                      # Groq — 30 RPM free
-CEREBRAS_API_KEY=                  # Cerebras — 1M tokens/day free
-CLOUDFLARE_ACCOUNT_ID=             # Cloudflare Workers AI — 10K neurons/day free
-CLOUDFLARE_API_TOKEN=              # Cloudflare API token
-COHERE_API_KEY=                    # Cohere — free tier
-HUGGINGFACE_API_KEY=               # HuggingFace — free inference
-OPENROUTER_API_KEY=                # OpenRouter — 337+ free models
-
-# ── BYOAPI Providers (paid, some offer free credits) ──
-TOGETHER_API_KEY=                  # Together AI — $5 free credit
-SAMBANOVA_API_KEY=                 # SambaNova — $5 free
-SCALEWAY_API_KEY=                  # Scaleway — pay per use
-INFERENCE_API_KEY=                 # Inference.net — $10 free credit
+```bash
+curl -X POST http://localhost:3333/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "Hello, ProxyGateLLM!"}]
+  }'
 ```
 
-> **Remember**: You do NOT need any API keys to get started. 10 providers (Pollinations, DuckDuckGo, LLM7, DeepAI, FreeGPT, Api.airforce, Venice, G4F, Blackbox, Phind) work immediately with zero configuration.
-
----
-
-## Usage Examples
-
-### Using with OpenAI SDK (Python)
+### Use with OpenAI SDK (Python)
 
 ```python
 from openai import OpenAI
 
 client = OpenAI(
     base_url="http://localhost:3333/v1",
-    api_key="not-needed"  # Free providers don't require keys
+    api_key="not-needed"  # Free providers don't require a key
 )
 
 response = client.chat.completions.create(
-    model="gpt-4o",
-    messages=[{"role": "user", "content": "Write a haiku about programming"}],
-    stream=True
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "Hello from ProxyGateLLM!"}]
 )
-
-for chunk in response:
-    if chunk.choices[0].delta.content:
-        print(chunk.choices[0].delta.content, end="")
+print(response.choices[0].message.content)
 ```
 
-### Using with Anthropic SDK (Python)
+---
 
-```python
-import anthropic
+## API Reference
 
-client = anthropic.Anthropic(
-    base_url="http://localhost:3333",
-    api_key="not-needed"
-)
+### Endpoints
 
-message = client.messages.create(
-    model="claude-opus-4-5-latest",
-    max_tokens=1024,
-    messages=[{"role": "user", "content": "Explain quantum computing simply"}]
-)
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/models` | List all available models and their provider status |
+| `POST` | `/v1/chat/completions` | OpenAI-compatible chat completion endpoint |
+| `POST` | `/v1/chat/completions` (stream) | Streaming chat completion (`"stream": true`) |
+| `GET` | `/v1/usage` | Get approximate cost and usage statistics |
+| `GET` | `/health` | Gateway health check and provider status |
+| `GET` | `/dashboard` | PWA monitoring dashboard |
 
-print(message.content[0].text)
+### Chat Completion Request
+
+```json
+{
+  "model": "gpt-4o-mini",
+  "messages": [
+    {"role": "system", "content": "You are a helpful assistant."},
+    {"role": "user", "content": "Explain circuit breakers."}
+  ],
+  "temperature": 0.7,
+  "max_tokens": 1024,
+  "stream": false
+}
 ```
 
-### Using with JavaScript/Node.js
+### Response Format
 
-```javascript
-import ProxyGateLLM from 'proxygatelymm';
-
-const ai = new ProxyGateLLM();
-const response = await ai.ask('Hello!');
-const code = await ai.code('Build a simple REST API with Express');
-```
-
-### Using with cURL (Streaming)
-
-```bash
-curl http://localhost:3333/v1/chat/completions \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "deepseek-r1",
-    "messages": [{"role": "user", "content": "Solve: 2x + 5 = 15"}],
-    "stream": true
-  }'
-```
-
-### Cost Estimation Before Sending
-
-```bash
-curl http://localhost:3333/v1/cost-estimate \
-  -H "Content-Type: application/json" \
-  -d '{
-    "model": "gpt-4o",
-    "messages": [{"role": "user", "content": "Write a 5000-word essay on AI"}]
-  }'
-
-# Response:
-# {
-#   "model": "gpt-4o",
-#   "inputTokens": 15,
-#   "outputTokens": 4096,
-#   "totalTokens": 4111,
-#   "inputCost": 0.0000375,
-#   "outputCost": 0.04096,
-#   "totalCost": 0.0409975,
-#   "currency": "USD",
-#   "isFree": false,
-#   "formatted_cost": "$0.0410"
-# }
-```
-
-### Check Circuit Breaker Status
-
-```bash
-curl http://localhost:3333/circuit-breakers | jq
-
-# Response:
-# {
-#   "pollinations": { "state": "CLOSED", "failureCount": 0, "successCount": 42 },
-#   "duckduckgo": { "state": "CLOSED", "failureCount": 0, "successCount": 38 },
-#   "g4f": { "state": "OPEN", "failureCount": 7, "remainingCooldown": 24500 }
-# }
-```
+Follows the standard OpenAI chat completion response format — fully compatible with the OpenAI SDK and any tooling built on top of it.
 
 ---
 
 ## Dashboard
 
-ProxyGateLLM includes a built-in **Progressive Web App (PWA) dashboard** accessible at `http://localhost:3333/dashboard`. The dashboard provides real-time visibility into every aspect of the gateway — no external monitoring tools required. It is installable as a PWA on both desktop and mobile, giving you a native-app-like experience for monitoring your LLM gateway.
+ProxyGateLLM includes a built-in **Progressive Web App (PWA)** dashboard accessible at `/dashboard`.
 
-### Dashboard Features
+### Features
 
-| Feature | Description |
-|---|---|
-| **Overview** | Real-time provider health, request rate, error rate, latency charts |
-| **Providers** | Status of all 22 providers with health, latency, and circuit breaker state |
-| **Models** | Full catalog of 430+ models with provider mapping and capabilities |
-| **Playground** | Interactive chat interface with model selection and streaming |
-| **Circuit Breakers** | Visual state of all circuit breakers with transition history |
-| **Cost Tracking** | Accumulated cost estimates across all requests |
-| **Request Logs** | Paginated log of recent requests with latency and status |
+- **Provider Health** — Real-time status of all 22 providers (healthy / tripped / probing)
+- **Request Metrics** — Throughput, latency percentiles, error rates
+- **Cost Tracking** — Approximate spend per provider, per model, per time window
+- **Circuit Breaker Controls** — View and manually reset tripped circuits
+- **Dark Mode** — Comfortable monitoring in any environment
 
-The dashboard is a static PWA served from the `/dashboard` directory — no build step, no framework, just vanilla HTML/CSS/JS with a service worker for offline caching and installability.
+### Access
+
+```
+http://localhost:3333/dashboard
+```
+
+The dashboard is a PWA — you can install it on your device for quick access without opening a browser tab.
 
 ---
 
-## Docker Support
+## Docker
 
-Docker support is **coming soon** and will be available in a future release. The planned Docker setup will include:
+### Using Docker Compose (Recommended)
 
-- Multi-stage `Dockerfile` for minimal image size (Alpine-based Node.js)
-- `docker-compose.yml` with environment variable configuration
-- Pre-built images on GitHub Container Registry (ghcr.io)
-- Volume mounts for persistent configuration
-- Health check integration with Docker's native health check system
-- Kubernetes-ready Helm charts for production deployments
+```bash
+# Clone and configure
+git clone https://github.com/mulkymalikuldhrs/ProxyGateLLM.git
+cd ProxyGateLLM
+cp .env.example .env
+# Edit .env with your configuration
 
-In the meantime, you can run ProxyGateLLM in a container with a simple Dockerfile:
+# Start with Docker Compose
+docker compose up -d
+```
 
-```dockerfile
-FROM node:18-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci --production
-COPY . .
-EXPOSE 3333
-CMD ["node", "index.js"]
+### Using Docker Directly
+
+```bash
+# Build the image
+docker build -t proxygate-llm .
+
+# Run the container
+docker run -d \
+  --name proxygate-llm \
+  -p 3333:3333 \
+  -e NODE_ENV=production \
+  --env-file .env \
+  proxygate-llm
+```
+
+### Docker Compose File
+
+```yaml
+version: '3.8'
+services:
+  proxygate-llm:
+    build: .
+    ports:
+      - "3333:3333"
+    env_file:
+      - .env
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3333/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 ```
 
 ---
 
-## Attributions
+## Attribution
 
-ProxyGateLLM v6.0.0 stands on the shoulders of several remarkable projects and services. We gratefully acknowledge their contributions to the AI and open-source communities:
+ProxyGateLLM was inspired by [OmniRoute](https://github.com/nicepkg/omniroute) — an open-source AI gateway project. While ProxyGateLLM was built from scratch with its own architecture and feature set, the concept of a unified multi-provider API gateway owes credit to projects like OmniRoute that pioneered the space.
 
-- **[OmniRoute](https://github.com/mulkymalikuldhrs/OmniRoute)** — The primary inspiration for v6.0.0's circuit breaker pattern, provider categorization framework, and cost estimation architecture. OmniRoute demonstrated that production-grade reliability features can coexist with free LLM access, and ProxyGateLLM adapts those patterns with its own 4-state circuit breaker and extended provider pool.
+---
 
-- **[Puter.js](https://puter.com)** — The free LLM SDK that powers ProxyGateLLM's most diverse provider, offering 500+ models including GPT-5, Claude Opus 4.5, and Grok 3 through a single free account. Puter.js makes it possible to access premium models without premium prices.
+## Disclaimer
 
-- **[Pollinations AI](https://pollinations.ai)** — A completely free, no-auth LLM API that provides OpenAI-compatible streaming access to GPT-4o Mini, Mistral, Llama, DeepSeek R1, and Qwen. Pollinations is often the first provider to respond and serves as a reliable backbone for the free tier.
+**For Education and Research Purpose Only**
 
-- **[DuckDuckGo AI Chat](https://duck.ai)** — DuckDuckGo's privacy-focused AI chat service provides free access to GPT-4o Mini, Claude 3 Haiku, Llama 3.1 70B, and Mixtral through a VQD token mechanism. Its strong privacy stance aligns with ProxyGateLLM's philosophy of accessible, user-respecting AI.
+This project is provided strictly for educational and research purposes. The authors and contributors assume **no responsibility or liability** for any damages, losses, or risks arising from the use of this software.
 
-- **[LLM7.io](https://llm7.io)** — A free OpenAI-compatible LLM gateway offering 30+ models including GPT-4o and DeepSeek R1. LLM7's commitment to a standardized API interface makes it one of the most reliable and easy-to-integrate free providers.
-
-- **[Venice.ai](https://venice.ai)** — A privacy-focused AI platform providing free access to Llama 3.3 70B, DeepSeek R1, Qwen Coder, and Gemma 3 with streaming support. Venice.ai's emphasis on user privacy and data sovereignty makes it a valuable addition to the free provider pool.
+- **We do not guarantee provider availability** — third-party services may change, rate-limit, or discontinue free tiers at any time.
+- **We do not bear any responsibility for costs** incurred through Puter.js or BYOAPI providers — monitor your usage carefully.
+- **We do not endorse or guarantee** the quality, safety, or accuracy of responses from any provider.
+- Use at your own risk. Always review provider terms of service before integrating.
 
 ---
 
 ## License
 
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+
 ```
 MIT License
 
-Copyright (c) 2025 Mulky Malikul Dhaher
+Copyright © 2024-2026 Mulky Malikul Dhaher. All rights reserved.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -702,10 +473,15 @@ SOFTWARE.
 
 ---
 
-<div align="center">
+## Author
 
-**Built with dedication by [Mulky Malikul Dhaher](https://github.com/mulkymalikuldhrs)**
+**Mulky Malikul Dhaher**
 
-[Report Bug](https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues) · [Request Feature](https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues) · [Contribute](https://github.com/mulkymalikuldhrs/ProxyGateLLM/pulls)
+[![GitHub](https://img.shields.io/badge/GitHub-mulkymalikuldhrs-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/mulkymalikuldhrs)
+[![Email](https://img.shields.io/badge/Email-mulkymalikudhr@mail.com-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:mulkymalikudhr@mail.com)
 
-</div>
+---
+
+<a href="https://github.com/mulkymalikuldhrs/ProxyGateLLM">
+  <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=100:44318d,50:2d1b69,0:1a0a2e&height=100&section=footer" />
+</a>
