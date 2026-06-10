@@ -179,6 +179,13 @@ The circuit breaker protects your application from cascading failures when a pro
 
 ```env
 # .env
+
+<!-- AUTO-PACKAGE-BADGES:START -->
+<!-- Auto-generated package badges -->
+
+![npm version](https://img.shields.io/npm/v/proxygatelymm?style=flat-square&logo=npm&color=blue) ![npm downloads](https://img.shields.io/npm/dw/proxygatelymm?style=flat-square&color=brightgreen) ![npm license](https://img.shields.io/npm/l/proxygatelymm?style=flat-square) [![Deployed](https://img.shields.io/badge/deployed-6.0.0-blue?style=flat-square)](https://www.npmjs.com/package/proxygatelymm)
+
+<!-- AUTO-PACKAGE-BADGES:END -->
 CIRCUIT_BREAKER_FAILURE_THRESHOLD=5    # Failures before tripping
 CIRCUIT_BREAKER_COOLDOWN_MS=30000      # Cooldown duration (30s)
 CIRCUIT_BREAKER_HALF_OPEN_PROBES=1     # Probe requests in half-open state
