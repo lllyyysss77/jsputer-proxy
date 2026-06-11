@@ -1,4 +1,3 @@
-<img src="docs/banner.png" width="100%">
 
 <a href="https://github.com/mulkymalikuldhrs/ProxyGateLLM">
   <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:1a0a2e,50:2d1b69,100:44318d&height=220&section=header&text=ProxyGateLLM&fontSize=42&fontColor=a78bfa&animation=fadeIn&fontAlignY=30&desc=Multi-LLM%20API%20Gateway&descSize=16&descColor=34d399&descAlignY=50" />
