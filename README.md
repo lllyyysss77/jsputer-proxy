@@ -147,6 +147,289 @@ One-command deployment with Docker and Docker Compose. Production-ready containe
 
 ---
 
+## Visual Architecture
+
+> Interactive Mermaid diagrams showing gateway internals, routing logic, and the full request lifecycle.
+
+### 1. Gateway Architecture
+
+Clients hit a single OpenAI-compatible endpoint, and the gateway routes through the appropriate provider adapter:
+
+```mermaid
+flowchart TD
+    subgraph CLIENTS["📡 Client Layer"]
+        direction LR
+        C1["OpenAI SDK<br/><i>Python / Node</i>"]
+        C2["HTTP Client<br/><i>curl / fetch</i>"]
+        C3["PWA Dashboard<br/><i>/dashboard</i>"]
+    end
+
+    subgraph GATEWAY["⚡ ProxyGateLLM Gateway — Express 5"]
+        direction TB
+        EP["/v1/chat/completions<br/>OpenAI-Compatible Endpoint"]
+        ROUTER["🧠 Smart Router<br/>Priority · Round-Robin<br/>Latency · Cost"]
+        CB["🛡️ Circuit Breaker<br/>Closed → Open → Half-Open"]
+        COST["💰 Cost Estimator<br/>Token Counting + Rate Tables"]
+        EP --> ROUTER --> CB
+        COST -.->|Estimates| ROUTER
+    end
+
+    subgraph ADAPTERS["🔌 Provider Adapter Layer"]
+        direction TB
+        PA["Puter.js Adapter<br/><i>10 Free + 8 Free-Key</i><br/>GPT-4o · Claude 3.5<br/>Gemini · Llama · Mixtral"]
+        DA["Direct SDK Adapter<br/><i>BYOAPI Providers</i><br/>OpenAI · Anthropic<br/>Google AI"]
+        CA["Custom REST Adapter<br/><i>Specialty APIs</i><br/>Azure OpenAI"]
+    end
+
+    subgraph PROVIDERS["☁️ Provider Cloud"]
+        direction LR
+        P1["Puter.js Cloud<br/><i>Free Tier</i>"]
+        P2["Anthropic API<br/><i>Paid</i>"]
+        P3["OpenAI API<br/><i>Paid</i>"]
+        P4["Google AI<br/><i>Paid</i>"]
+        P5["Groq · Together<br/>Fireworks · etc.<br/><i>Free-Key</i>"]
+    end
+
+    CLIENTS --> EP
+    CB --> ADAPTERS
+    PA --> P1 & P5
+    DA --> P2 & P3 & P4
+    CA --> P3
+
+    style CLIENTS fill:#1a0a2e,stroke:#a78bfa,color:#fff
+    style GATEWAY fill:#1a0a2e,stroke:#34d399,color:#fff
+    style ADAPTERS fill:#1a0a2e,stroke:#f59e0b,color:#fff
+    style PROVIDERS fill:#1a0a2e,stroke:#6366f1,color:#fff
+    style EP fill:#2d1b69,stroke:#a78bfa,color:#e2e8f0
+    style ROUTER fill:#2d1b69,stroke:#34d399,color:#e2e8f0
+    style CB fill:#2d1b69,stroke:#ef4444,color:#e2e8f0
+    style COST fill:#2d1b69,stroke:#f59e0b,color:#e2e8f0
+    style PA fill:#2d1b69,stroke:#22c55e,color:#e2e8f0
+    style DA fill:#2d1b69,stroke:#ef4444,color:#e2e8f0
+    style CA fill:#2d1b69,stroke:#6366f1,color:#e2e8f0
+```
+
+### 2. Circuit Breaker State Machine
+
+Automatic failure detection with configurable cooldown — prevents cascading failures:
+
+```mermaid
+stateDiagram-v2
+    [*] --> CLOSED : Gateway Starts
+
+    CLOSED --> OPEN : Failures >= Threshold<br/><i>e.g. 5 consecutive failures</i>
+    CLOSED --> CLOSED : Request Succeeds<br/><i>Reset failure counter</i>
+
+    OPEN --> HALF_OPEN : Cooldown Expires<br/><i>e.g. 30 seconds</i>
+    OPEN --> OPEN : Request Blocked<br/><i>Bypass this provider</i>
+
+    HALF_OPEN --> CLOSED : Probe Succeeds<br/><i>Provider is healthy again</i>
+    HALF_OPEN --> OPEN : Probe Fails<br/><i>Still broken — reset cooldown</i>
+
+    note right of CLOSED
+        Normal operation
+        Requests flow to provider
+        Failures are counted
+    end note
+
+    note right of OPEN
+        Provider is tripped
+        All requests bypass
+        Cooldown timer starts
+    end note
+
+    note right of HALF_OPEN
+        Cooldown expired
+        Single probe request sent
+        Test if provider recovered
+    end note
+```
+
+### 3. Smart Routing Decision Tree
+
+Four routing strategies with automatic failover — choose based on your priorities:
+
+```mermaid
+flowchart TD
+    REQ["Incoming Request<br/>POST /v1/chat/completions"]
+
+    subgraph ROUTING["🧠 Routing Strategy Selection"]
+        direction TB
+        CHECK{"Routing Strategy<br/>Configured?"}
+
+        PRIORITY["🎯 Priority Mode<br/>Try providers in order<br/>Best for: Preferred providers"]
+        ROUNDROBIN["🔄 Round-Robin Mode<br/>Cycle through providers<br/>Best for: Load distribution"]
+        LATENCY["⚡ Latency-Aware Mode<br/>Route to fastest provider<br/>Best for: Performance-critical"]
+        COST["💰 Cost-Optimized Mode<br/>Prefer cheaper providers<br/>Best for: Budget constraints"]
+    end
+
+    subgraph EXECUTION["⚙️ Request Execution"]
+        SEL["Select Provider<br/>Per Strategy Rules"]
+        CB_CHECK{"Circuit Breaker<br/>Is Provider Healthy?"}
+        SEND["Send Request<br/>to Provider"]
+        RETRY["Next Provider<br/>in Fallback Chain"]
+    end
+
+    subgraph RESULT["📊 Result"]
+        SUCCESS["✅ Return Response<br/>+ Cost Estimate"]
+        FAIL["❌ All Providers Failed<br/>Return Error"]
+    end
+
+    REQ --> CHECK
+    CHECK -->|priority| PRIORITY
+    CHECK -->|round-robin| ROUNDROBIN
+    CHECK -->|latency| LATENCY
+    CHECK -->|cost| COST
+
+    PRIORITY & ROUNDROBIN & LATENCY & COST --> SEL
+    SEL --> CB_CHECK
+    CB_CHECK -->|Healthy| SEND
+    CB_CHECK -->|Tripped| RETRY
+    RETRY --> CB_CHECK
+    SEND -->|Success| SUCCESS
+    SEND -->|Error| RETRY
+    RETRY -->|Max Retries Hit| FAIL
+
+    style REQ fill:#1a0a2e,stroke:#a78bfa,color:#fff
+    style ROUTING fill:#1a0a2e,stroke:#34d399,color:#fff
+    style EXECUTION fill:#1a0a2e,stroke:#f59e0b,color:#fff
+    style RESULT fill:#1a0a2e,stroke:#6366f1,color:#fff
+    style CHECK fill:#2d1b69,stroke:#a78bfa,color:#e2e8f0
+    style PRIORITY fill:#2d1b69,stroke:#ef4444,color:#e2e8f0
+    style ROUNDROBIN fill:#2d1b69,stroke:#3b82f6,color:#e2e8f0
+    style LATENCY fill:#2d1b69,stroke:#f59e0b,color:#e2e8f0
+    style COST fill:#2d1b69,stroke:#22c55e,color:#e2e8f0
+    style SUCCESS fill:#14532d,stroke:#22c55e,color:#fff
+    style FAIL fill:#7f1d1d,stroke:#ef4444,color:#fff
+```
+
+### 4. Provider Ecosystem Map
+
+All 22 providers categorized by access tier — from zero-config to BYOAPI:
+
+```mermaid
+flowchart TB
+    subgraph FREE["🟢 FREE — No API Key Needed (10 Providers)"]
+        direction LR
+        F1["GPT-4o-mini"]
+        F2["GPT-4o"]
+        F3["Claude 3.5 Sonnet"]
+        F4["Claude 3 Haiku"]
+        F5["Gemini 2.0 Flash"]
+        F6["Gemini 1.5 Pro"]
+        F7["Llama 3.1 70B"]
+        F8["Llama 3.1 8B"]
+        F9["Mixtral 8x7B"]
+        F10["Command R+"]
+    end
+
+    subgraph FREEKEY["🟡 FREE-KEY — Free Signup Required (8 Providers)"]
+        direction LR
+        K1["Groq<br/><i>Llama/Mixtral</i>"]
+        K2["Together AI"]
+        K3["Fireworks AI"]
+        K4["Cerebras"]
+        K5["SambaNova"]
+        K6["Mistral AI"]
+        K7["Cohere"]
+        K8["AI21 Labs"]
+    end
+
+    subgraph BYOAPI["🔴 BYOAPI — Bring Your Own Paid Key (4 Providers)"]
+        direction LR
+        B1["OpenAI<br/><i>Direct</i>"]
+        B2["Anthropic<br/><i>Direct</i>"]
+        B3["Google AI<br/><i>Direct</i>"]
+        B4["Azure<br/><i>OpenAI</i>"]
+    end
+
+    FREE -->|Upgrade for<br/>higher limits| FREEKEY
+    FREEKEY -->|Need production<br/>SLAs| BYOAPI
+
+    NOTE["💡 All 10 free providers use<br/>Puter.js client-side authentication.<br/>Subject to rate limits &amp; fair use."]
+
+    style FREE fill:#14532d,stroke:#22c55e,color:#fff
+    style FREEKEY fill:#78350f,stroke:#f59e0b,color:#fff
+    style BYOAPI fill:#7f1d1d,stroke:#ef4444,color:#fff
+    style F1 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style F2 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style F3 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style F4 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style F5 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style F6 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style F7 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style F8 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style F9 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style F10 fill:#166534,stroke:#4ade80,color:#dcfce7
+    style K1 fill:#92400e,stroke:#fbbf24,color:#fef3c7
+    style K2 fill:#92400e,stroke:#fbbf24,color:#fef3c7
+    style K3 fill:#92400e,stroke:#fbbf24,color:#fef3c7
+    style K4 fill:#92400e,stroke:#fbbf24,color:#fef3c7
+    style K5 fill:#92400e,stroke:#fbbf24,color:#fef3c7
+    style K6 fill:#92400e,stroke:#fbbf24,color:#fef3c7
+    style K7 fill:#92400e,stroke:#fbbf24,color:#fef3c7
+    style K8 fill:#92400e,stroke:#fbbf24,color:#fef3c7
+    style B1 fill:#991b1b,stroke:#f87171,color:#fecaca
+    style B2 fill:#991b1b,stroke:#f87171,color:#fecaca
+    style B3 fill:#991b1b,stroke:#f87171,color:#fecaca
+    style B4 fill:#991b1b,stroke:#f87171,color:#fecaca
+    style NOTE fill:#1a0a2e,stroke:#a78bfa,color:#e2e8f0
+```
+
+### 5. Request Flow — Full Lifecycle
+
+From client request to response, including retries and circuit breaker interactions:
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant G as Gateway
+    participant R as Router
+    participant CB as Circuit Breaker
+    participant P1 as Provider A
+    participant P2 as Provider B
+    participant P3 as Provider C
+
+    C->>G: POST /v1/chat/completions
+    G->>R: Select provider by strategy
+
+    R->>CB: Check Provider A health
+    CB-->>R: CLOSED (healthy)
+    R->>P1: Send request
+
+    alt Provider A succeeds
+        P1-->>G: 200 OK + Response
+        G->>CB: Reset failure counter
+        G-->>C: Response + Cost estimate
+    else Provider A fails
+        P1-->>G: Error / Timeout
+        G->>CB: Increment failure count
+        CB-->>CB: Check threshold
+
+        alt Threshold reached
+            CB->>CB: Trip to OPEN
+        end
+
+        R->>CB: Check Provider B health
+        CB-->>R: CLOSED (healthy)
+        R->>P2: Retry with Provider B
+
+        alt Provider B succeeds
+            P2-->>G: 200 OK + Response
+            G-->>C: Response + Cost estimate
+        else Provider B fails
+            P2-->>G: Error
+            R->>P3: Try Provider C
+            P3-->>G: 200 OK + Response
+            G-->>C: Response + Cost estimate
+        end
+    end
+
+    Note over CB: After 30s cooldown in OPEN<br/>→ HALF_OPEN → probe<br/>→ CLOSED if probe succeeds
+```
+
+---
+
 ## Circuit Breaker
 
 The circuit breaker protects your application from cascading failures when a provider goes down or becomes unresponsive.
