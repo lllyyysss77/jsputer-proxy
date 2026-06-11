@@ -1,3 +1,5 @@
+<img src="docs/banner.png" width="100%">
+
 <a href="https://github.com/mulkymalikuldhrs/ProxyGateLLM">
   <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=0:1a0a2e,50:2d1b69,100:44318d&height=220&section=header&text=ProxyGateLLM&fontSize=42&fontColor=a78bfa&animation=fadeIn&fontAlignY=30&desc=Multi-LLM%20API%20Gateway&descSize=16&descColor=34d399&descAlignY=50" />
 </a>
@@ -9,7 +11,7 @@
 <br/>
 
 [![Node.js](https://img.shields.io/badge/Node.js->=18-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-4-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
+[![Express](https://img.shields.io/badge/Express-5-000000?style=for-the-badge&logo=express&logoColor=white)](https://expressjs.com/)
 [![Puter.js](https://img.shields.io/badge/Puter.js-SDK-ff69b4?style=for-the-badge&logo=javascript&logoColor=white)](https://puter.com/)
 [![Anthropic](https://img.shields.io/badge/Anthropic-SDK-d4a574?style=for-the-badge&logo=anthropic&logoColor=white)](https://www.anthropic.com/)
 [![Version](https://img.shields.io/badge/Version-6.0.0-6366f1?style=for-the-badge&logo=semver&logoColor=white)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/releases)
@@ -17,12 +19,12 @@
 
 <br/>
 
+[![npm version](https://img.shields.io/npm/v/proxygatelymm?style=flat-square&logo=npm&color=blue)](https://www.npmjs.com/package/proxygatelymm)
+[![npm downloads](https://img.shields.io/npm/dw/proxygatelymm?style=flat-square&color=brightgreen)](https://www.npmjs.com/package/proxygatelymm)
 [![GitHub Stars](https://img.shields.io/github/stars/mulkymalikuldhrs/ProxyGateLLM?style=for-the-badge&logo=github&color=gold)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/mulkymalikuldhrs/ProxyGateLLM?style=for-the-badge&logo=github&color=blue)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/fork)
 [![GitHub Issues](https://img.shields.io/github/issues/mulkymalikuldhrs/ProxyGateLLM?style=for-the-badge&logo=github&color=red)](https://github.com/mulkymalikuldhrs/ProxyGateLLM/issues)
 [![GitHub License](https://img.shields.io/github/license/mulkymalikuldhrs/ProxyGateLLM?style=for-the-badge&logo=github&color=green)](LICENSE)
-
-<br/>
 
 </div>
 
@@ -72,27 +74,35 @@ The gateway provides an **OpenAI-compatible API endpoint**, making it a drop-in 
 ## Features
 
 ### 🔌 Unified API Endpoint
+
 A single OpenAI-compatible `/v1/chat/completions` endpoint that routes across all 22 providers. Just change the `baseURL` in your existing OpenAI SDK code — no other changes needed.
 
 ### 🛡️ Circuit Breaker
+
 Automatic failure detection with configurable cooldown periods. When a provider fails repeatedly, the circuit breaker trips and routes traffic to healthy alternatives — preventing cascading failures and timeout waits.
 
 ### 🧠 Smart Routing
+
 Round-robin failover, priority-based selection, and latency-aware routing. Configure which providers to prefer and the gateway automatically balances load while falling back on errors.
 
 ### 💰 Cost Estimation
+
 Real-time approximate cost tracking per request with token counting and provider rate tables. Get visibility into spending across providers — note that estimates are approximate and may differ from actual billing.
 
 ### 📊 PWA Dashboard
+
 Built-in Progressive Web App for monitoring provider health, request throughput, error rates, and cost metrics — all from a single interface accessible at `/dashboard`.
 
 ### 🪶 Minimal Dependencies
+
 Only 4 runtime dependencies: `express`, `dotenv`, `@heyputer/puter.js`, and `@anthropic-ai/sdk`. Small attack surface, fast installs, easy auditing.
 
 ### 🔄 Provider Failover
+
 If a provider returns an error, the gateway automatically retries with the next available provider in the same category — seamless resilience without client-side retry logic.
 
 ### 🐳 Docker Ready
+
 One-command deployment with Docker and Docker Compose. Production-ready containerization with configurable environment variables.
 
 ---
@@ -107,43 +117,6 @@ One-command deployment with Docker and Docker Compose. Production-ready containe
 - **Circuit breaker thresholds are configurable but require tuning** per deployment environment. Default settings may be too aggressive or too lenient for your traffic patterns.
 - **Cost estimation is approximate** — actual costs depend on provider pricing changes, tokenization differences, and rounding. Do not rely on estimates for exact billing.
 - **This is a gateway, not an LLM provider** — ProxyGateLLM routes requests to existing providers. It does not host or serve models itself.
-
----
-
-## Architecture
-
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                        Client Application                        │
-│                   (OpenAI SDK / HTTP / Dashboard)                │
-└──────────────────────────┬──────────────────────────────────────┘
-                           │  POST /v1/chat/completions
-                           ▼
-┌─────────────────────────────────────────────────────────────────┐
-│                      ProxyGateLLM Gateway                        │
-│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────────┐  │
-│  │   Router     │  │   Circuit    │  │    Cost Estimator     │  │
-│  │  (Priority/  │──│   Breaker    │  │  (Token Counting +    │  │
-│  │   Round-     │  │  (Failure    │  │   Rate Tables)        │  │
-│  │   Robin)     │  │  Detection)  │  │                       │  │
-│  └──────┬───────┘  └──────┬───────┘  └───────────────────────┘  │
-│         │                 │                                      │
-│  ┌──────▼─────────────────▼──────────────────────────────────┐   │
-│  │                    Provider Adapter Layer                   │   │
-│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐               │   │
-│  │  │ Puter.js │  │ Direct   │  │  Custom  │               │   │
-│  │  │ Adapter  │  │ SDK      │  │  REST    │               │   │
-│  │  │ (10+8)   │  │ Adapter  │  │  Adapter │               │   │
-│  │  └────┬─────┘  └────┬─────┘  └────┬─────┘               │   │
-│  └───────┼──────────────┼─────────────┼──────────────────────┘   │
-└──────────┼──────────────┼─────────────┼──────────────────────────┘
-           │              │             │
-     ┌─────▼─────┐  ┌────▼─────┐  ┌───▼──────┐
-     │  Puter.js  │  │ Anthropic│  │  OpenAI  │
-     │  Cloud     │  │   API    │  │   API    │
-     │ (Free+Key) │  │ (BYOAPI) │  │ (BYOAPI) │
-     └────────────┘  └──────────┘  └──────────┘
-```
 
 ---
 
@@ -225,24 +198,6 @@ stateDiagram-v2
 
     HALF_OPEN --> CLOSED : Probe Succeeds<br/><i>Provider is healthy again</i>
     HALF_OPEN --> OPEN : Probe Fails<br/><i>Still broken — reset cooldown</i>
-
-    note right of CLOSED
-        Normal operation
-        Requests flow to provider
-        Failures are counted
-    end note
-
-    note right of OPEN
-        Provider is tripped
-        All requests bypass
-        Cooldown timer starts
-    end note
-
-    note right of HALF_OPEN
-        Cooldown expired
-        Single probe request sent
-        Test if provider recovered
-    end note
 ```
 
 ### 3. Smart Routing Decision Tree
@@ -309,7 +264,7 @@ All 22 providers categorized by access tier — from zero-config to BYOAPI:
 
 ```mermaid
 flowchart TB
-    subgraph FREE["🟢 FREE — No API Key Needed (10 Providers)"]
+    subgraph FREE["🟢 FREE — No API Key Needed"]
         direction LR
         F1["GPT-4o-mini"]
         F2["GPT-4o"]
@@ -323,7 +278,7 @@ flowchart TB
         F10["Command R+"]
     end
 
-    subgraph FREEKEY["🟡 FREE-KEY — Free Signup Required (8 Providers)"]
+    subgraph FREEKEY["🟡 FREE-KEY — Free Signup Required"]
         direction LR
         K1["Groq<br/><i>Llama/Mixtral</i>"]
         K2["Together AI"]
@@ -335,7 +290,7 @@ flowchart TB
         K8["AI21 Labs"]
     end
 
-    subgraph BYOAPI["🔴 BYOAPI — Bring Your Own Paid Key (4 Providers)"]
+    subgraph BYOAPI["🔴 BYOAPI — Bring Your Own Paid Key"]
         direction LR
         B1["OpenAI<br/><i>Direct</i>"]
         B2["Anthropic<br/><i>Direct</i>"]
@@ -345,8 +300,6 @@ flowchart TB
 
     FREE -->|Upgrade for<br/>higher limits| FREEKEY
     FREEKEY -->|Need production<br/>SLAs| BYOAPI
-
-    NOTE["💡 All 10 free providers use<br/>Puter.js client-side authentication.<br/>Subject to rate limits &amp; fair use."]
 
     style FREE fill:#14532d,stroke:#22c55e,color:#fff
     style FREEKEY fill:#78350f,stroke:#f59e0b,color:#fff
@@ -373,7 +326,6 @@ flowchart TB
     style B2 fill:#991b1b,stroke:#f87171,color:#fecaca
     style B3 fill:#991b1b,stroke:#f87171,color:#fecaca
     style B4 fill:#991b1b,stroke:#f87171,color:#fecaca
-    style NOTE fill:#1a0a2e,stroke:#a78bfa,color:#e2e8f0
 ```
 
 ### 5. Request Flow — Full Lifecycle
@@ -430,6 +382,43 @@ sequenceDiagram
 
 ---
 
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Client Application                        │
+│                   (OpenAI SDK / HTTP / Dashboard)                │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │  POST /v1/chat/completions
+                           ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                      ProxyGateLLM Gateway                        │
+│  ┌─────────────┐  ┌──────────────┐  ┌───────────────────────┐  │
+│  │   Router     │  │   Circuit    │  │    Cost Estimator     │  │
+│  │  (Priority/  │──│   Breaker    │  │  (Token Counting +    │  │
+│  │   Round-     │  │  (Failure    │  │   Rate Tables)        │  │
+│  │   Robin)     │  │  Detection)  │  │                       │  │
+│  └──────┬───────┘  └──────┬───────┘  └───────────────────────┘  │
+│         │                 │                                      │
+│  ┌──────▼─────────────────▼──────────────────────────────────┐   │
+│  │                    Provider Adapter Layer                   │   │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐               │   │
+│  │  │ Puter.js │  │ Direct   │  │  Custom  │               │   │
+│  │  │ Adapter  │  │ SDK      │  │  REST    │               │   │
+│  │  │ (10+8)   │  │ Adapter  │  │  Adapter │               │   │
+│  │  └────┬─────┘  └────┬─────┘  └────┬─────┘               │   │
+│  └───────┼──────────────┼─────────────┼──────────────────────┘   │
+└──────────┼──────────────┼─────────────┼──────────────────────────┘
+           │              │             │
+     ┌─────▼─────┐  ┌────▼─────┐  ┌───▼──────┐
+     │  Puter.js  │  │ Anthropic│  │  OpenAI  │
+     │  Cloud     │  │   API    │  │   API    │
+     │ (Free+Key) │  │ (BYOAPI) │  │ (BYOAPI) │
+     └────────────┘  └──────────┘  └──────────┘
+```
+
+---
+
 ## Circuit Breaker
 
 The circuit breaker protects your application from cascading failures when a provider goes down or becomes unresponsive.
@@ -462,13 +451,6 @@ The circuit breaker protects your application from cascading failures when a pro
 
 ```env
 # .env
-
-<!-- AUTO-PACKAGE-BADGES:START -->
-<!-- Auto-generated package badges -->
-
-![npm version](https://img.shields.io/npm/v/proxygatelymm?style=flat-square&logo=npm&color=blue) ![npm downloads](https://img.shields.io/npm/dw/proxygatelymm?style=flat-square&color=brightgreen) ![npm license](https://img.shields.io/npm/l/proxygatelymm?style=flat-square) [![Deployed](https://img.shields.io/badge/deployed-6.0.0-blue?style=flat-square)](https://www.npmjs.com/package/proxygatelymm)
-
-<!-- AUTO-PACKAGE-BADGES:END -->
 CIRCUIT_BREAKER_FAILURE_THRESHOLD=5    # Failures before tripping
 CIRCUIT_BREAKER_COOLDOWN_MS=30000      # Cooldown duration (30s)
 CIRCUIT_BREAKER_HALF_OPEN_PROBES=1     # Probe requests in half-open state
@@ -720,6 +702,22 @@ ProxyGateLLM was inspired by [OmniRoute](https://github.com/nicepkg/omniroute) �
 
 ---
 
+## Related Projects
+
+We're building a family of open source tools! Check out our other projects:
+
+| Project | Description | Stars |
+|---------|-------------|-------|
+| [📈 Quant-Nanggroe-AI](https://github.com/mulkymalikuldhrs/Quant-Nanggroe-AI) | AI-powered quantitative analysis for Nanggroe market | ⭐ |
+| [🧠 AI-MultiColony-Ecosystem](https://github.com/mulkymalikuldhrs/AI-MultiColony-Ecosystem) | Multi-agent AI colony simulation | ⭐ 3 |
+| [📋 Kalen](https://github.com/mulkymalikuldhrs/kalen) | Smart scheduling and AI task management | ⭐ |
+| [🤖 ProxyGateLLM](https://github.com/mulkymalikuldhrs/ProxyGateLLM) | Multi-LLM gateway with priority fallback | ⭐ 36 |
+| [🧩 Mnemosyne](https://github.com/mulkymalikuldhrs/mnemosyne) | Knowledge management and note-taking | ⭐ |
+
+🚀 **[Visit our Contributor Hub](https://mulkymalikuldhrs.github.io/contribute-to-our-projects/)** — 28 open source projects seeking contributors!
+
+---
+
 ## Disclaimer
 
 **For Education and Research Purpose Only**
@@ -733,49 +731,11 @@ This project is provided strictly for educational and research purposes. The aut
 
 ---
 
-
-
-## 🔗 Related Projects
-
-We're building a family of open source tools! Check out our other projects:
-
-| Project | Description | Stars |
-|---------|-------------|-------|
-| [📈 Quant-Nanggroe-AI](https://github.com/mulkymalikuldhrs/Quant-Nanggroe-AI) | AI-powered quantitative analysis for Nanggroe market | ⭐ |
-| [🧠 AI-MultiColony-Ecosystem](https://github.com/mulkymalikuldhrs/AI-MultiColony-Ecosystem) | Multi-agent AI colony simulation | ⭐ 3 |
-| [📋 Kalen](https://github.com/mulkymalikuldhrs/kalen) | Smart scheduling & AI task management | ⭐ |
-| [🤖 ProxyGateLLM](https://github.com/mulkymalikuldhrs/ProxyGateLLM) | Multi-LLM gateway with priority fallback | ⭐ 36 |
-| [🧩 Mnemosyne](https://github.com/mulkymalikuldhrs/mnemosyne) | Knowledge management & note-taking | ⭐ |
-
-🚀 **[Visit our Contributor Hub](https://mulkymalikuldhrs.github.io/contribute-to-our-projects/)** — 28 open source projects seeking contributors!
-
 ## License
 
 This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
 
-```
-MIT License
-
 Copyright © 2024-2026 Mulky Malikul Dhaher. All rights reserved.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-```
 
 ---
 
@@ -791,7 +751,6 @@ SOFTWARE.
 <a href="https://github.com/mulkymalikuldhrs/ProxyGateLLM">
   <img width="100%" src="https://capsule-render.vercel.app/api?type=waving&color=100:44318d,50:2d1b69,0:1a0a2e&height=100&section=footer" />
 </a>
-
 
 <!-- Schema.org Structured Data for Search Engines -->
 <script type="application/ld+json">
